@@ -25,10 +25,19 @@ def render(func):
         renderWindowInteractor.SetInteractorStyle(interactorStyle)
 
         results = func(*args, **kwargs)
-        renderer.AddActor(results.actor)
+        results.render(renderer)
 
         renderWindow.Render()
         renderWindowInteractor.Start()
 
     return rendering
 
+
+class Example:
+
+    from Lattice import Lattice
+
+    poscar = 'tests/example/poscar.vasp'
+    lattice = Lattice().load_poscar(poscar)
+    lattice.bonds = lattice.bonds.make(lattice.atoms['Zr'], lattice.atoms['O'], 2.5)
+    lattice.bonds = lattice.bonds.make(lattice.atoms['Si'], lattice.atoms['O'], 2.5)
