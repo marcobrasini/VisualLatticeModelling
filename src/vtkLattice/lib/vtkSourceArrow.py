@@ -1,5 +1,6 @@
-from ..lib.vtkSource import vtkSource
+from vtkmodules.vtkCommonCore import vtkMath
 from vtkmodules.vtkFiltersSources import vtkArrowSource
+from ..lib.vtkSource import vtkSource
 
 
 class vtkSourceArrow(vtkSource):
@@ -10,15 +11,12 @@ class vtkSourceArrow(vtkSource):
         self.SetInputConnection(self.source.GetOutputPort())
 
     def set_vector(self, vector):
-        self.orientate(vector, 0)
+        self.orientate(vector, axis=0)
+        self.rescale((vtkMath.Norm(vector), 1.0, 1.0))
         return self
 
     def set_origin(self, origin):
         self.translate(origin)
-        return self
-
-    def set_length(self, length):
-        self.rescale(length)
         return self
 
     def set_ratio(self, ratio):
@@ -38,6 +36,17 @@ class vtkSourceArrow(vtkSource):
         self.source.SetShaftResolution(resolution[0])
         self.source.SetTipResolution(resolution[1])
         return self
+
+    def vector(self):
+        length = self.length()
+        matrix = self.transformation.orientation
+        return [length * matrix.GetElement(0, i) for i in range(3)]
+
+    def origin(self):
+        return self.transformation.translation
+
+    def length(self):
+        return self.transformation.scale[0]
 
     def ratio(self):
         return self.source.GetTipLength()

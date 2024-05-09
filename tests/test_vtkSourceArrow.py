@@ -1,3 +1,5 @@
+import numpy as np
+
 from src.vtkLattice.lib.vtkSourceArrow import vtkSourceArrow
 from src.vtkLattice.lib.vtkSource import vtkSource
 from . import render
@@ -6,13 +8,37 @@ from . import render
 class Test_vtkSourceArrow:
 
     ratio = 0.3
-    origin = (-0.5, 0.0, 0.0)
-    vector = (1.0, 1.0, 0.0)
     radius = (0.1, 0.15)
     resolution = (10, 12)
+    origin = (-0.5, 0.0, 0.0)
+    vector = (1.0, 1.0, 0.0)
+    length = np.linalg.norm(vector)
 
     def test__init__(self):
         arrow = vtkSourceArrow()
+
+    def test_length(self):
+        arrow = vtkSourceArrow().set_vector(self.vector)
+        assert np.allclose(arrow.length(), np.linalg.norm(self.vector))
+
+    def test_set_vector(self):
+        arrow = vtkSourceArrow().set_vector(self.vector)
+        assert np.isclose(arrow.transformation.scale[0], self.length)
+        for i in range(3):
+            x = arrow.transformation.orientation.GetElement(0, i)
+            assert np.isclose(x, self.vector[i]/self.length)
+
+    def test_vector(self):
+        arrow = vtkSourceArrow().set_vector(self.vector)
+        assert np.allclose(arrow.vector(), self.vector)
+
+    def test_origin(self):
+        arrow = vtkSourceArrow().set_origin(self.origin)
+        assert arrow.origin() == self.origin
+
+    def test_set_origin(self):
+        arrow = vtkSourceArrow().set_origin(self.origin)
+        assert arrow.transformation.translation == self.origin
 
     def test_set_ratio(self):
         arrow = vtkSourceArrow().set_ratio(self.ratio)
@@ -56,7 +82,7 @@ def test_rendering():
     from vtkmodules.vtkRenderingCore import vtkActor, vtkPolyDataMapper
     from src.vtkLattice.lib.vtkEntity import vtkEntity
     class vtkEntityArrow(vtkEntity):
-        def __init__(self, source):
+        def __init__(self, source: vtkSource):
             self.source = source
             self.mapper = vtkPolyDataMapper()
             self.mapper.SetInputConnection(self.source.GetOutputPort())
