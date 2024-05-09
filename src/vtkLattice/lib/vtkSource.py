@@ -1,8 +1,8 @@
-from vtkmodules.vtkFiltersGeneral import vtkTransformPolyDataFilter
+from vtkmodules.vtkFiltersGeneral import vtkTransformFilter
 from ..lib.vtkTransformation import vtkTransformation
 
 
-class vtkSource(vtkTransformPolyDataFilter):
+class vtkSource(vtkTransformFilter):
 
     def __init__(self):
         super().__init__()
