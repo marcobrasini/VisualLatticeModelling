@@ -25,7 +25,11 @@ def render(func):
         renderWindowInteractor.SetInteractorStyle(interactorStyle)
 
         results = func(*args, **kwargs)
-        results.render(renderer)
+        if isinstance(results, tuple):
+            for result in results:
+                result.render(renderer)
+        else:
+            results.render(renderer)
 
         renderWindow.Render()
         renderWindowInteractor.Start()
