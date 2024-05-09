@@ -35,7 +35,7 @@ class LatticeBonds(LatticeArray):
     def make(self,
              atoms1: LatticeAtoms,
              atoms2: LatticeAtoms,
-             r):
+             r: float):
         basis = self.basis
         _bonds = []
         for atom1 in atoms1:

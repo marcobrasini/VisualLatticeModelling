@@ -18,7 +18,9 @@ class LatticePoly:
         self.center = center
 
     def hull(self):
-        return sp.spatial.ConvexHull(self.atoms.sites().cartesian())
+        sites = self.atoms.sites() - self.center.site
+        sites = sites.centered().cartesian()
+        return sp.spatial.ConvexHull(sites)
 
     def volume(self):
         return self.hull().volume

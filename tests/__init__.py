@@ -1,5 +1,7 @@
 import numpy as np
 
+from src.Lattice.Lattice import Lattice
+
 
 class Example:
 
@@ -185,3 +187,4 @@ class Example:
 
     poscar_input = "tests/example/poscar.input"
     poscar_output = "tests/example/poscar.output"
+    lattice = Lattice().load_poscar(poscar_input)
