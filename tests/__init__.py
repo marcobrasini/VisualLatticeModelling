@@ -36,6 +36,31 @@ def render(func):
 
     return rendering
 
+def openqt(func):
+
+    import sys
+    from PyQt5.Qt import QApplication
+    from PyQt5.QtWidgets import QMainWindow, QFrame, QVBoxLayout
+
+    def qtwindow(*args, **kwargs):
+        class RenderWindow(QMainWindow):
+            def __init__(self, viewer):
+                super().__init__()
+                self.layout = QVBoxLayout()
+                self.layout.addWidget(viewer)
+                self.frame = QFrame()
+                self.frame.setLayout(self.layout)
+                self.setCentralWidget(self.frame)
+
+        app = QApplication(sys.argv)
+        viewer = func(*args, **kwargs)
+        window = RenderWindow(viewer)
+        window.show()
+        sys.exit(app.exec_())
+
+    return qtwindow
+
+
 
 class Example:
 
