@@ -139,3 +139,13 @@ class Example:
         [0.6811770661120250, 0.4668836902484195, 0.9760485009165849],
         [0.4668836902484195, 0.8519392436395414, 0.9760485009165849],
     ])
+
+    np.random.seed(17281920)
+    vars = np.random.uniform(-1, 1, size=sites.shape)
+
+    count = {'Na': 24, 'Zr': 12, 'Si': 18, 'O': 72}
+    atoms = np.repeat(('Na', 'Zr', 'Si', 'O'), (24, 12, 18, 72))
+    names = np.hstack(([f'Na{i}' for i in range(24)],
+                       [f'Zr{i}' for i in range(12)],
+                       [f'Si{i}' for i in range(18)],
+                       [f'O{i}' for i in range(72)]))

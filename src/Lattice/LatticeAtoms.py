@@ -1,2 +1,66 @@
-class LatticeAtoms:
-    pass
+import numpy as np
+
+from .LatticeArray import LatticeArray
+from .LatticeSites import LatticeSites
+from .LatticeSite import LatticeSite
+from .LatticeAtom import LatticeAtom
+
+
+class LatticeAtoms(LatticeArray):
+
+    def __getitem__(self, item):
+        if isinstance(item, str):
+            item = self.atoms() == item
+        return super().__getitem__(item)
+
+    def count(self):
+        count = np.unique(self.atoms(), return_counts=True)
+        return dict(zip(*count))
+
+    def atoms(self):
+        atoms = super().get_attribute('atom')
+        return atoms
+
+    def names(self):
+        names = super().get_attribute('name')
+        return names
+
+    def sites(self):
+        sites = super().get_attribute('site')
+        return LatticeSites(sites, basis=self.basis)
+
+    def vars(self):
+        return super().get_attribute('var')
+
+    def set_atoms(self, atoms):
+        super().set_attribute('atom', atoms)
+        return self
+
+    def set_names(self, names):
+        super().set_attribute('name', names)
+        return self
+
+    def set_sites(self, sites):
+        sites = [LatticeSite(site, self.basis) for site in sites]
+        super().set_attribute('site', sites)
+        return self
+
+    def set_vars(self, vars):
+        super().set_attribute('var', vars)
+        return self
+
+    def make(self,
+             atoms: list,
+             names: list = None,
+             sites: list = None,
+             vars: list = None):
+        basis = self.basis
+        _atoms = []
+        for i, atom in enumerate(atoms):
+            name = None if names is None else names[i]
+            site = None if sites is None else LatticeSite(sites[i], basis)
+            var = None if vars is None else vars[i]
+            _atoms.append(LatticeAtom(atom, name, site , var))
+        self = np.append(self, _atoms).view(LatticeAtoms)
+        self.basis = basis
+        return self
