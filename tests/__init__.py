@@ -182,3 +182,6 @@ class Example:
                 52: [ 79,  72, 116, 110],
                 53: [ 74,  78, 109, 115]},
     }
+
+    poscar_input = "tests/example/poscar.input"
+    poscar_output = "tests/example/poscar.output"
