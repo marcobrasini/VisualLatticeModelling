@@ -19,13 +19,15 @@ class Test_vtkLatticePoly:
     center = LatticeAtom('Si', site=LatticeSite([0.25, 0.25, 0.25], basis))
     poly = LatticePoly(atoms, center)
 
+    vtkatoms = vtkLatticeAtoms([*atoms, center])
+
     def test__init__(self):
-        poly = vtkLatticePoly(self.poly)
+        poly = vtkLatticePoly(self.poly, self.vtkatoms)
 
 
 @render
 def test_rendering():
-    atoms = vtkLatticeAtoms(Test_vtkLatticePoly.atoms)
+    vtkatoms = Test_vtkLatticePoly.vtkatoms
     center = vtkLatticeAtom(Test_vtkLatticePoly.center)
-    poly = Test_vtkLatticePoly.poly
-    return vtkLatticePoly(poly), atoms, center
+    poly = vtkLatticePoly(Test_vtkLatticePoly.poly, vtkatoms)
+    return poly, vtkatoms, center

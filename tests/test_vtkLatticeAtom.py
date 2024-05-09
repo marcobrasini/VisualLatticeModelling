@@ -6,7 +6,7 @@ from . import render
 class Test_vtkLatticeAtom:
 
     site = LatticeSite([0.2, 0.0, 0.0], basis=2*np.identity(3))
-    atom = LatticeAtom('Si', 'Si0', site, np.array([0.2, 0.2, 0.0]))
+    atom = LatticeAtom('Si', 'Si0', site, np.array([0.7, 0.7, 0.0]))
 
 
 @render

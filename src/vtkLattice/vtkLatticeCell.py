@@ -3,6 +3,10 @@ from .lib.vtkSourcePolyline import vtkSourcePolyline
 from .lib.vtkEntity import vtkEntity
 
 
+DEFAULT_COLOR = (0.0, 0.0, 0.0)
+DEFAULT_WIDTH = 1.0
+
+
 class vtkLatticeCell(vtkEntity):
 
     points = [[0, 0, 0],
@@ -28,6 +32,8 @@ class vtkLatticeCell(vtkEntity):
         self.mapper.SetInputConnection(self.source.GetOutputPort())
         self.actor = vtkActor()
         self.actor.SetMapper(self.mapper)
+        self.set_color(DEFAULT_COLOR)
+        self.set_width(DEFAULT_WIDTH)
 
     def color(self):
         return self.actor.GetProperty().GetColor()
