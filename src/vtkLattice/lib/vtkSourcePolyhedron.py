@@ -6,15 +6,10 @@ from ..lib.vtkSource import vtkSource
 
 class vtkSourcePolyhedron(vtkSource):
 
-    def __init__(self,
-                 points,
-                 indices,
-                 ):
+    def __init__(self):
         super().__init__()
         self.source = vtkUnstructuredGrid()
         self.SetInputData(self.source)
-        self.set_points(points)
-        self.set_indices(indices)
 
     def set_points(self, points):
         self.points = points
