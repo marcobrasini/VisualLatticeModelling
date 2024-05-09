@@ -27,5 +27,7 @@ def test_rendering():
     points = Test_vtkSourcePolyhedron.points
     indices = Test_vtkSourcePolyhedron.indices
 
-    polyhedron = vtkSourcePolyhedron(points, indices)
+    polyhedron = vtkSourcePolyhedron()
+    polyhedron.set_points(points)
+    polyhedron.set_indices(indices)
     return vtkEntityPolyhedron(polyhedron)

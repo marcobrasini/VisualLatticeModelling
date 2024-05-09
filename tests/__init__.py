@@ -45,3 +45,5 @@ class Example:
     lattice = Lattice().load_poscar(poscar)
     lattice.bonds = lattice.bonds.make(lattice.atoms['Zr'], lattice.atoms['O'], 2.5)
     lattice.bonds = lattice.bonds.make(lattice.atoms['Si'], lattice.atoms['O'], 2.5)
+    lattice.polys = lattice.polys.make(lattice.atoms['Zr'], lattice.atoms['O'], 6)
+    lattice.polys = lattice.polys.make(lattice.atoms['Si'], lattice.atoms['O'], 4)
