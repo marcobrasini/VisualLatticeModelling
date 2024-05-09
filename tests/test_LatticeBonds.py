@@ -13,10 +13,7 @@ class Test_LatticeBonds:
     basis = Example.basis
     sites = Example.sites
     atoms = Example.atoms
-    atoms = LatticeAtoms([
-        LatticeAtom(atom, site=LatticeSite(site, Example.basis))
-        for atom, site in zip(atoms, sites)
-    ], basis=basis)
+    atoms = LatticeAtoms(basis=basis).make(atoms, sites=sites)
     bonds = Example.bonds
     zro_bonds = []
     for i in bonds['ZrO'].keys():

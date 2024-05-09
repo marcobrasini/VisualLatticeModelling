@@ -6,3 +6,5 @@ from .LatticeAtom import LatticeAtom
 from .LatticeAtoms import LatticeAtoms
 from .LatticeBond import LatticeBond
 from .LatticeBonds import LatticeBonds
+from .LatticePoly import LatticePoly
+from .LatticePolys import LatticePolys
