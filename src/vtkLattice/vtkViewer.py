@@ -7,6 +7,7 @@ from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
 from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.vtkRenderingCore import vtkRenderer
 from .vtkLattice import vtkLattice
+from .vtkPicker import vtkPicker
 
 
 class vtkViewer(QVTKRenderWindowInteractor):
@@ -21,7 +22,8 @@ class vtkViewer(QVTKRenderWindowInteractor):
         self.renderer.GetActiveCamera().SetPosition(0, 0, 1000)
         self.GetRenderWindow().AddRenderer(self.renderer)
         self.interactor = self.GetRenderWindow().GetInteractor()
-        self.interactorStyle = vtkInteractorStyleTrackballCamera()
+        self.interactorStyle = vtkPicker()
+        self.interactorStyle.SetDefaultRenderer(self.renderer)
         self.interactor.SetInteractorStyle(self.interactorStyle)
         self.interactor.Initialize()
 

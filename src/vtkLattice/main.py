@@ -1,25 +1,25 @@
+import sys
+from PyQt5.Qt import QApplication
 from PyQt5.QtWidgets import QMainWindow, QFrame, QVBoxLayout
-from vtkViewer import vtkViewer
+from .vtkViewer import vtkViewer
+from .vtkLattice import vtkLattice
 
 
-class MainWindow(QMainWindow):
+def display(lattice: vtkLattice):
 
-    def __init__(self, parent=None):
-        QMainWindow.__init__(self, parent)
-        self.viewer = vtkViewer()
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(self.viewer)
-        self.frame = QFrame()
-        self.frame.setLayout(self.layout)
-        self.setCentralWidget(self.frame)
+    class QtWindow(QMainWindow):
 
-
-if __name__ == "__main__":
-
-    import sys
-    from PyQt5.Qt import QApplication
+        def __init__(self):
+            QMainWindow.__init__(self)
+            self.frame = QFrame()
+            self.viewer = vtkViewer()
+            self.layout = QVBoxLayout()
+            self.layout.addWidget(self.viewer)
+            self.frame.setLayout(self.layout)
+            self.setCentralWidget(self.frame)
 
     app = QApplication(sys.argv)
-    window = MainWindow()
+    window = QtWindow()
+    window.viewer.load_lattice(lattice)
     window.show()
     sys.exit(app.exec_())

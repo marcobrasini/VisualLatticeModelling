@@ -3,9 +3,9 @@ from vtkmodules.vtkFiltersCore import vtkElevationFilter
 from vtkmodules.vtkRenderingCore import vtkDiscretizableColorTransferFunction
 from vtkmodules.vtkRenderingCore import vtkPolyDataMapper, vtkActor
 from Lattice import LatticeBond
-from src.vtkLattice.lib.vtkSourceCylinder import vtkSourceCylinder
-from src.vtkLattice.vtkLatticeAtoms import vtkLatticeAtoms
-from src.vtkLattice.lib.vtkEntity import vtkEntity, vtkSource
+from .lib.vtkEntity import vtkEntity, vtkSource
+from .lib.vtkSourceCylinder import vtkSourceCylinder
+from .vtkLatticeAtoms import vtkLatticeAtoms
 
 
 DEFAULT_RADIUS = 0.1
