@@ -5,7 +5,6 @@ from . import render
 class Test_vtkSourcePolyhedron:
 
     points = [[0., 0., 0.], [1., 1., 0.], [1., 0., 1.], [0., 1., 1.]]
-    indices = [[0,1,2], [1,2,3], [2,3,0], [3,0,1]]
 
 
 @render
@@ -25,9 +24,7 @@ def test_rendering():
             self.actor.GetProperty().SetLineWidth(2)
 
     points = Test_vtkSourcePolyhedron.points
-    indices = Test_vtkSourcePolyhedron.indices
 
     polyhedron = vtkSourcePolyhedron()
     polyhedron.set_points(points)
-    polyhedron.set_indices(indices)
     return vtkEntityPolyhedron(polyhedron)
