@@ -4,7 +4,8 @@ from . import render
 
 class Test_vtkSourcePolygon:
 
-    points = [[0., 0., 0.], [1., 1., 0.], [1., 0., 1.], [-1, -1., -1]]
+    points = [[0., 0., 0.], [1., 1., 0.], [1., 0., 1.]]
+    indices = [[0, 1, 2]]
 
 
 @render
@@ -24,7 +25,9 @@ def test_rendering():
             self.actor.GetProperty().SetLineWidth(2)
 
     points = Test_vtkSourcePolygon.points
+    indices = Test_vtkSourcePolygon.indices
 
     polyhedron = vtkSourcePolygon()
     polyhedron.set_points(points)
+    polyhedron.set_indices(indices)
     return vtkEntityPolygon(polyhedron)

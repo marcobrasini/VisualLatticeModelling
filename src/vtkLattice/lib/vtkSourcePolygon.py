@@ -16,10 +16,13 @@ class vtkSourcePolygon(vtkSource):
         for point in self.points:
             vertices.InsertNextPoint(point)
         self.source.SetPoints(vertices)
-        polygon = vtkPolygon()
-        polygon.GetPointIds().SetNumberOfIds(len(self.points))
-        for i in range(len(self.points)):
-            polygon.GetPointIds().SetId(i, i)
-        cell = vtkCellArray()
-        cell.InsertNextCell(polygon)
-        self.source.SetPolys(cell)
+
+    def set_indices(self, indices):
+        self.indices = indices
+        polygons = vtkCellArray()
+        for index in indices:
+            polygon = vtkPolygon()
+            polygon.GetPointIds().SetNumberOfIds(len(index))
+            [polygon.GetPointIds().SetId(i, i) for i in range(len(index))]
+            polygons.InsertNextCell(polygon)
+        self.source.SetPolys(polygons)

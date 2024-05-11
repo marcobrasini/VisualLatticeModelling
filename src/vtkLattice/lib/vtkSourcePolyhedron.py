@@ -1,6 +1,6 @@
-from vtkmodules.vtkCommonCore import vtkPoints
+from vtkmodules.vtkCommonCore import vtkPoints, vtkIdList
 from vtkmodules.vtkCommonDataModel import vtkConvexPointSet
-from vtkmodules.vtkCommonDataModel import vtkUnstructuredGrid
+from vtkmodules.vtkCommonDataModel import vtkUnstructuredGrid, VTK_POLYHEDRON
 from ..lib.vtkSource import vtkSource
 
 
@@ -17,9 +17,20 @@ class vtkSourcePolyhedron(vtkSource):
         vertices = vtkPoints()
         for point in self.points:
             vertices.InsertNextPoint(point)
+        self.source.SetPoints(vertices)
+
+    def set_indices(self, indices):
+        self.indices = indices
+        faces = vtkIdList()
+        faces.InsertNextId(len(indices))
+        for index in indices:
+            faces.InsertNextId(len(index))
+            [faces.InsertNextId(i) for i in index]
+        self.source.InsertNextCell(VTK_POLYHEDRON, faces)
+
+    def set_convex(self):
         convex = vtkConvexPointSet()
         for i in range(len(self.points)):
             convex.GetPointIds().InsertId(i, i)
-        self.source.SetPoints(vertices)
-        self.source.InsertNextCell(convex.GetCellType(),
-                                   convex.GetPointIds())
+        self.source.Reset()
+        self.source.InsertNextCell(convex.GetCellType(), convex.GetPointIds())
