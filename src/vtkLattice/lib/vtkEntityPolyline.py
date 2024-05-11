@@ -3,6 +3,9 @@ from ..lib.vtkEntity import vtkEntity
 from ..lib.vtkSourcePolyline import vtkSourcePolyline
 
 
+DEFAULT_COLOR = (0.5, 0.5, 0.5)
+
+
 class vtkEntityPolyline(vtkEntity):
 
     def __init__(self):
@@ -11,7 +14,7 @@ class vtkEntityPolyline(vtkEntity):
         self.mapper.SetInputConnection(self.source.GetOutputPort())
         self.actor = vtkActor()
         self.actor.SetMapper(self.mapper)
-        self.actor.GetProperty().SetEdgeColor((0.5, 0.5, 0.5))
+        self.set_color(DEFAULT_COLOR)
 
     def points(self):
         return self.source.points
@@ -20,6 +23,7 @@ class vtkEntityPolyline(vtkEntity):
         return self.actor.GetProperty().GetColor()
 
     def set_points(self, points):
+        self.source.source.Reset()
         self.source.set_points(points)
         self.source.set_indices([[i for i in range(len(points))]])
         return self
