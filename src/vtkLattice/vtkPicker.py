@@ -1,7 +1,10 @@
-from vtkmodules.vtkRenderingCore import vtkPropPicker, vtkInteractorStyle
+from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
+from vtkmodules.vtkRenderingCore import vtkPropPicker, vtkAreaPicker, vtkInteractorStyle
+from vtkmodules.vtkRenderingCore import vtkPolyDataMapper2D, vtkActor2D, vtkAssembly
+from .lib.vtkSourcePolyline import vtkSourcePolyline
 
 
-class vtkPickerProp(vtkPropPicker):
+class vtkPickerSingle(vtkPropPicker):
     def __init__(self):
         super().__init__()
 
@@ -12,21 +15,20 @@ class vtkPickerProp(vtkPropPicker):
 
 class vtkPicker:
 
-    def __init__(self,
-                 controller: vtkInteractorStyle
-                 ):
+    def __init__(self, parent):
         self.picked = []
         self.picking = False
         self.collect = True
         self.color = (0., 0., 0.)
-        self.propPicker = vtkPickerProp()
-        self.controller = controller
-        self.interactor = self.controller.GetInteractor
-        self.renderer = self.controller.GetCurrentRenderer
+        self.pickerSingle = vtkPickerSingle()
+
+        self.parent = parent
+        self.interactor = self.parent.GetInteractor
+        self.renderer = self.parent.GetCurrentRenderer
 
     def rightPressed(self, obj, event):
         self.x0, self.y0 = self.interactor().GetEventPosition()
-        picked = self.propPicker(self.x0, self.y0, self.renderer())
+        picked = self.pickerSingle(self.x0, self.y0, self.renderer())
         if picked:
             self.pickedEvent(picked)
             return picked

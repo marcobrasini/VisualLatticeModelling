@@ -10,7 +10,7 @@ from .vtkViewerController import vtkViewerController
 
 class vtkViewer(QVTKRenderWindowInteractor):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent = None):
         super().__init__(parent)
         self.lattice = []
         self.renderer = vtkRenderer()
@@ -24,6 +24,7 @@ class vtkViewer(QVTKRenderWindowInteractor):
         self.interactor = self.GetRenderWindow().GetInteractor()
         self.interactor.SetInteractorStyle(self.controller)
         self.interactor.Initialize()
+
 
     def load_lattice(self, vtklattice: vtkLattice):
         vtklattice.render(self.renderer)
