@@ -22,3 +22,7 @@ class vtkLatticeAtoms(vtkArray):
     def render(self, renderer):
         for atom in self:
             atom.render(renderer)
+
+    def translate(self, displacement):
+        for atom in self:
+            atom.translate(displacement)

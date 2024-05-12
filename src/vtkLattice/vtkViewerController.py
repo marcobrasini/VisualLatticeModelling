@@ -6,8 +6,9 @@ from .vtkDrawer import vtkDrawer
 
 class vtkViewerController(vtkInteractorStyleTrackballCamera):
 
-    def __init__(self):
+    def __init__(self, viewer):
         super().__init__()
+        self.viewer = viewer
         self.viewerPicker = vtkViewerPicker(self)
         self.drawerPicker = vtkDrawerPicker(self)
         self.drawer = vtkDrawer(self)
@@ -21,7 +22,7 @@ class vtkViewerController(vtkInteractorStyleTrackballCamera):
 
     def OnChar(self, obj, event):
         key = self.GetInteractor().GetKeyCode()
-        if key == '3':
+        if key in ['p', '3']:
             return
         super(vtkInteractorStyleTrackballCamera, obj).OnChar()
 
@@ -55,6 +56,8 @@ class vtkViewerController(vtkInteractorStyleTrackballCamera):
             if key == 'Escape':
                 self.picker.clean()
                 self.picker = self.viewerPicker
+            if key == 'p':
+                self.viewer.printer.print(self.viewer.name)
 
     def keyRelease(self, obj, event):
         self.picker.collect = True

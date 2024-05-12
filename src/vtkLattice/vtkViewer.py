@@ -8,6 +8,7 @@ from vtkmodules.vtkRenderingCore import vtkRenderer
 from .vtkLattice import vtkLattice
 from .vtkViewerController import vtkViewerController
 from .vtkViewerCamera import vtkViewerCamera
+from .vtkViewerPrinter import vtkViewerPrinter
 
 
 class vtkViewer(QVTKRenderWindowInteractor):
@@ -25,16 +26,19 @@ class vtkViewer(QVTKRenderWindowInteractor):
         self.renderer.GetActiveCamera().SetPosition(0, 0, 1000)
         self.GetRenderWindow().AddRenderer(self.renderer)
 
-        self.controller = vtkViewerController()
+        self.camera = vtkViewerCamera()
+        self.camera.SetDefaultRenderer(self.renderer)
+        self.camera.SetInteractor(self.GetRenderWindow().GetInteractor())
+        self.camera.EnabledOn()
+
+        self.printer = vtkViewerPrinter()
+        self.printer.windowFilter.SetInput(self.GetRenderWindow())
+
+        self.controller = vtkViewerController(self)
         self.controller.SetDefaultRenderer(self.renderer)
         self.interactor = self.GetRenderWindow().GetInteractor()
         self.interactor.SetInteractorStyle(self.controller)
         self.interactor.Initialize()
-
-        self.camera = vtkViewerCamera()
-        self.camera.SetDefaultRenderer(self.renderer)
-        self.camera.SetInteractor(self.interactor)
-        self.camera.EnabledOn()
 
 
     def load_lattice(self, vtklattice: vtkLattice):
