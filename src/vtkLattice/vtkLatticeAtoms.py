@@ -26,3 +26,7 @@ class vtkLatticeAtoms(vtkArray):
     def translate(self, displacement):
         for atom in self:
             atom.translate(displacement)
+
+    def draw(self, sphere=True, arrow=True, invert=False):
+        for atom in self:
+            atom.draw(sphere, arrow, invert)

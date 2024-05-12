@@ -51,7 +51,7 @@ class vtkLatticeBond(vtkEntity):
         self.atom1 = vtkAtoms[vtkAtoms.index(bond.atom1)]
         self.atom2 = vtkAtoms[vtkAtoms.index(bond.atom2)]
         self.source = vtkLatticeBondSource(self.bond)
-        self.colors = vtkLatticeBondColor([self.atom1.color(), self.atom2.color()])
+        self.colors = vtkLatticeBondColor([self.atom1.color, self.atom2.color])
         self.mapper = vtkPolyDataMapper()
         self.mapper.SetInputConnection(self.source.GetOutputPort())
         self.mapper.SetLookupTable(self.colors)

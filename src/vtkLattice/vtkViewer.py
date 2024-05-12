@@ -26,8 +26,7 @@ class vtkViewer(QVTKRenderWindowInteractor):
         self.renderer.GetActiveCamera().SetPosition(0, 0, 1000)
         self.GetRenderWindow().AddRenderer(self.renderer)
 
-        self.camera = vtkViewerCamera()
-        self.camera.SetDefaultRenderer(self.renderer)
+        self.camera = vtkViewerCamera(self.renderer)
         self.camera.SetInteractor(self.GetRenderWindow().GetInteractor())
         self.camera.EnabledOn()
 
@@ -40,8 +39,11 @@ class vtkViewer(QVTKRenderWindowInteractor):
         self.interactor.SetInteractorStyle(self.controller)
         self.interactor.Initialize()
 
-
     def load_lattice(self, vtklattice: vtkLattice):
         vtklattice.render(self.renderer)
         self.lattice.append(vtklattice)
         return self
+
+    def close(self):
+        self.Finalize()
+        super().close()

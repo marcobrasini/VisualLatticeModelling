@@ -1,7 +1,4 @@
-from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
-from vtkmodules.vtkRenderingCore import vtkPropPicker, vtkAreaPicker, vtkInteractorStyle
-from vtkmodules.vtkRenderingCore import vtkPolyDataMapper2D, vtkActor2D, vtkAssembly
-from .lib.vtkSourcePolyline import vtkSourcePolyline
+from vtkmodules.vtkRenderingCore import vtkPropPicker
 
 
 class vtkPickerSingle(vtkPropPicker):
@@ -41,17 +38,17 @@ class vtkPicker:
 
     def pickedEvent(self, picked):
          if self.collect:
-             self.__select(picked)
+             self._select(picked)
          else:
-             self.__remove(picked)
+             self._remove(picked)
 
-    def __select(self, picked):
+    def _select(self, picked):
         if not picked in self.picked:
             picked.GetProperty().EdgeVisibilityOn()
             picked.GetProperty().SetEdgeColor(self.color)
             self.picked.append(picked)
 
-    def __remove(self, picked):
+    def _remove(self, picked):
         if picked in self.picked:
             picked.GetProperty().EdgeVisibilityOff()
             self.picked.remove(picked)

@@ -40,7 +40,7 @@ class vtkSourceArrow(vtkSource):
     def vector(self):
         length = self.length()
         matrix = self.transformation.orientation
-        return [length * matrix.GetElement(0, i) for i in range(3)]
+        return [length * matrix.GetElement(i, 0) for i in range(3)]
 
     def origin(self):
         return self.transformation.translation

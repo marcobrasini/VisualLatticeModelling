@@ -23,7 +23,7 @@ class vtkLatticePoly(vtkEntity):
         self.mapper.SetInputConnection(self.source.GetOutputPort())
         self.actor = vtkActor()
         self.actor.SetMapper(self.mapper)
-        self.set_color(self.center.color())
+        self.set_color(self.center.color)
         self.set_opacity(DEFAULT_OPACITY)
 
     def color(self):

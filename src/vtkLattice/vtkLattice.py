@@ -36,3 +36,8 @@ class vtkLattice:
         self.atoms.rotate(rotation, axis)
         self.bonds.rotate(rotation, axis)
         self.polys.rotate(rotation, axis)
+
+    @classmethod
+    def load_poscar(cls, poscar):
+        lattice = Lattice.load_poscar(poscar)
+        return cls(lattice)

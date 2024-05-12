@@ -21,3 +21,6 @@ class vtkLatticeBonds(vtkArray):
     def bonds(self):
         return [vtkbond.bond for vtkbond in self]
 
+    def set_radius(self, radius):
+        for bond in self:
+            bond.source.cylinder.set_radius(radius)

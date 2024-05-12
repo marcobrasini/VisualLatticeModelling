@@ -1,3 +1,4 @@
+import numpy as np
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
 from .vtkViewerPicker import vtkViewerPicker
 from .vtkDrawerPicker import vtkDrawerPicker
@@ -58,6 +59,10 @@ class vtkViewerController(vtkInteractorStyleTrackballCamera):
                 self.picker = self.viewerPicker
             if key == 'p':
                 self.viewer.printer.print(self.viewer.name)
+            if key == 'v':
+                self.viewer.lattice[0].atoms.draw(False, True, True)
+            if key == 'b':
+                self.viewer.lattice[0].atoms.draw(True, False, False)
 
     def keyRelease(self, obj, event):
         self.picker.collect = True

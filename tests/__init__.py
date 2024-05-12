@@ -56,7 +56,7 @@ def openqt(func):
         viewer = func(*args, **kwargs)
         window = RenderWindow(viewer)
         window.show()
-        app.exec_()
+        app.exec()
         app.exit()
 
     return qtwindow

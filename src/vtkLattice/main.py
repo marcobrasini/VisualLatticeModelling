@@ -5,7 +5,7 @@ from .vtkViewer import vtkViewer
 from .vtkLattice import vtkLattice
 
 
-def display(lattice: vtkLattice, name: str = ""):
+def display(name: str = "", *vtklattice: vtkLattice):
 
     class QtWindow(QMainWindow):
 
@@ -20,7 +20,8 @@ def display(lattice: vtkLattice, name: str = ""):
 
     app = QApplication(sys.argv)
     window = QtWindow()
-    window.viewer.load_lattice(lattice)
+    for lattice in vtklattice:
+        window.viewer.load_lattice(lattice)
     window.viewer.name = name
     window.show()
     app.exec()
