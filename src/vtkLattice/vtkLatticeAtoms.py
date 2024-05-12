@@ -1,4 +1,6 @@
 from Lattice import LatticeAtom, LatticeAtoms
+from vtkmodules.vtkRenderingCore import vtkRenderer
+
 from .lib.vtkArray import vtkArray
 from .vtkLatticeAtom import vtkLatticeAtom
 
@@ -17,7 +19,8 @@ class vtkLatticeAtoms(vtkArray):
         return super().index(item)
 
     def atoms(self):
-        return [vtkatom.atom for vtkatom in self.array]
+        return [vtkatom.atom for vtkatom in self]
 
-    def atomstype(self):
-        return [vtkatom.atom.atom for vtkatom in self.array]
+    def render(self, renderer: vtkRenderer):
+        for vtkatom in self:
+            vtkatom.render(renderer)

@@ -13,6 +13,6 @@ class Test_vtkLatticeAtom:
 def test_rendering():
     atom = Test_vtkLatticeAtom.atom
     vtkatom = vtkLatticeAtom(atom)
-    vtkatom.source.draw(True, True)
+    vtkatom.draw(True, True)
     vtkatom.set_image([[0,0,0], [1,0,0], [0,1,0], [1,1,0]])
     return vtkatom
