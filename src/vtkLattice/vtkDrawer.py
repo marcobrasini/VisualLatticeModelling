@@ -1,6 +1,6 @@
-from src.vtkLattice.lib.vtkEntityPolyline import vtkEntityPolyline
-from src.vtkLattice.lib.vtkEntityPolygon import vtkEntityPolygon
-from src.vtkLattice.lib.vtkEntityPoly import vtkEntityPoly
+from .lib.vtkEntityPolyline import vtkEntityPolyline
+from .lib.vtkEntityPolygon import vtkEntityPolygon
+from .lib.vtkEntityPoly import vtkEntityPoly
 
 
 class vtkDrawer:

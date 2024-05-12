@@ -1,3 +1,4 @@
+from PyQt5.QtWidgets import QWidget
 # noinspection PyUnresolvedReferences
 import vtkmodules.vtkInteractionStyle
 # noinspection PyUnresolvedReferences
@@ -6,12 +7,16 @@ from vtkmodules.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtkmodules.vtkRenderingCore import vtkRenderer
 from .vtkLattice import vtkLattice
 from .vtkViewerController import vtkViewerController
+from .vtkViewerCamera import vtkViewerCamera
 
 
 class vtkViewer(QVTKRenderWindowInteractor):
 
-    def __init__(self, parent = None):
+    def __init__(self,
+                 parent: QWidget = None
+                 ):
         super().__init__(parent)
+        self.name = ""
         self.lattice = []
         self.renderer = vtkRenderer()
         self.renderer.SetBackground((1.0, 1.0, 1.0))
@@ -19,6 +24,7 @@ class vtkViewer(QVTKRenderWindowInteractor):
         self.renderer.GetActiveCamera().ParallelProjectionOn()
         self.renderer.GetActiveCamera().SetPosition(0, 0, 1000)
         self.GetRenderWindow().AddRenderer(self.renderer)
+
         self.controller = vtkViewerController()
         self.controller.SetDefaultRenderer(self.renderer)
         self.interactor = self.GetRenderWindow().GetInteractor()

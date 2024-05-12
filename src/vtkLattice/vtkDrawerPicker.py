@@ -1,4 +1,4 @@
-from src.vtkLattice.vtkPicker import vtkPicker
+from .vtkPicker import vtkPicker
 
 
 class vtkDrawerPicker(vtkPicker):

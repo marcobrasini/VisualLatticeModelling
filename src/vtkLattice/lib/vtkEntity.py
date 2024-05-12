@@ -13,7 +13,7 @@ class vtkEntity(vtkOutlet):
         renderer.AddActor(self.actor)
 
     def translate(self, displacement):
-        self.actor.SetOrigin(displacement)
+        self.actor.SetPosition(displacement)
 
     def rotate(self, angle, axis):
         self.actor.RotateWXYZ(angle, *axis)

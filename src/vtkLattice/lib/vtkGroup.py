@@ -8,7 +8,7 @@ class vtkGroup(vtkOutlet, vtkAssembly):
         renderer.AddActor(self)
 
     def translate(self, displacement):
-        self.SetOrigin(displacement)
+        self.SetPosition(displacement)
 
     def rotate(self, angle, axis):
         self.RotateWXYZ(angle, *axis)

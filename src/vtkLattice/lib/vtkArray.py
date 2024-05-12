@@ -32,7 +32,7 @@ class vtkArray(vtkOutlet):
 
     def translate(self, displacement):
         for actor in self.actor():
-            actor.SetOrigin(displacement)
+            actor.SetPosition(displacement)
 
     def rotate(self, angle, axis):
         for actor in self.actor():
