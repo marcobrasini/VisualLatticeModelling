@@ -1,4 +1,5 @@
 import numpy as np
+from .LatticeIndex import LatticeIndex
 from .LatticeBasis import LatticeBasis
 from .LatticeAtoms import LatticeAtoms
 
@@ -6,7 +7,7 @@ from .LatticeAtoms import LatticeAtoms
 class LatticeSuper:
 
     def __init__(self, index):
-        self.index = np.array([1 if n == 0 else n for n in index])
+        self.index = LatticeIndex(index).ones()
 
     def ncell(self):
         ncell = self.index[0]*self.index[1]*self.index[2]
