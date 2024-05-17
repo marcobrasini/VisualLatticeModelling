@@ -21,7 +21,18 @@ class Lattice:
         self.bonds = LatticeBonds(basis=self.basis) if bonds is None else bonds
         self.polys = LatticePolys(basis=self.basis) if polys is None else polys
 
+    def center(self):
+        return np.sum(self.basis, axis=0) / 2
 
+    def set_center(self, center):
+        sites = self.atoms.sites() - np.array(center)
+        self.atoms.set_sites(sites.centered())
+        return self
+
+    def set_origin(self, origin):
+        sites = self.atoms.sites() - np.array(origin)
+        self.atoms.set_sites(sites.periodic())
+        return self
 
     def load_poscar(self, poscar):
         with open(poscar, 'r') as poscar:
@@ -45,3 +56,4 @@ class Lattice:
             poscar.write('Direct\n')
             np.savetxt(poscar, self.atoms.sites(), fmt='%16.10f')
             return self
+

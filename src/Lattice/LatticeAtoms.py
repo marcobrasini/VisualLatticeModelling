@@ -64,3 +64,13 @@ class LatticeAtoms(LatticeArray):
         self = np.append(self, _atoms).view(LatticeAtoms)
         self.basis = basis
         return self
+
+    def make_vars(self, atoms):
+        delta = self.sites() - atoms.sites()
+        basis = atoms.basis
+        sites = atoms.sites()
+        sites = np.where(delta <= -0.5, sites - 1, sites)
+        sites = np.where(delta > +0.5, sites + 1, sites)
+        vars = self.sites().cartesian() - sites @ basis
+        self.set_vars(vars)
+        return self
