@@ -24,11 +24,13 @@ class LatticeIndex(np.ndarray):
 
     def reduce(self):
         gcd = self.gcd()
-        return np.array([i/gcd for i in self]).view(LatticeIndex)
+        reduced = np.array([i/gcd for i in self]).astype(int)
+        return reduced.view(LatticeIndex)
 
     def invert(self):
         lcm = self.lcm()
-        return np.array([0 if i==0 else lcm/i for i in self]).view(LatticeIndex)
+        inverse = np.array([0 if i==0 else lcm/i for i in self]).astype(int)
+        return inverse.view(LatticeIndex)
 
     def ones(self):
         return np.array([1 if i == 0 else i for i in self]).view(LatticeIndex)
