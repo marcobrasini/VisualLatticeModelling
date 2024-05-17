@@ -90,6 +90,13 @@ class Test_Lattice:
         assert np.array_equal(lattice.atoms, self.atoms)
         assert np.array_equal(lattice.atoms.basis, self.atoms.basis)
 
-    def test_load_poscar(self):
-        lattice = Lattice("", self.basis, self.atoms)
-        lattice = lattice.save_poscar(self.poscar_output)
+    def test_save_poscar(self):
+        Lattice("", self.basis, self.atoms).save_poscar(self.poscar_output)
+        saved = Lattice().load_poscar(self.poscar_output)
+        assert np.allclose(saved.basis, self.basis)
+        assert saved.basis.parameter == self.basis.parameter
+        assert saved.atoms.count() == self.atoms.count()
+        assert np.allclose(saved.atoms.basis, self.atoms.basis)
+        for site in saved.atoms.sites():
+            delta = np.isclose(np.abs(self.sites - site), 0.0)
+            assert np.sum(np.all(delta, axis=1)) == 1

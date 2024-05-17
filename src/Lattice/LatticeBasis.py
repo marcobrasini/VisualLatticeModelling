@@ -14,6 +14,9 @@ class LatticeBasis(np.ndarray):
         if obj is None: return
         self.parameter = getattr(obj, 'parameter', 1.0)
 
+    def reduced(self):
+        return np.array(self / self.parameter)
+
     def a(self) -> float:
         return np.linalg.norm(self.__getitem__(0))
 

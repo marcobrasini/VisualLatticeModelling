@@ -26,6 +26,10 @@ class Test_LatticeBasis:
         assert basis.parameter == 1.0
         assert np.array_equal(basis, self.basis)
 
+    def test_reduced(self):
+        basis = LatticeBasis(self.reduced, parameter=self.parameter)
+        assert np.array_equal(basis.reduced(), self.reduced)
+
     def test_a(self):
         basis = LatticeBasis(self.reduced, parameter=self.parameter)
         assert basis.a() == np.linalg.norm(self.basis[0])

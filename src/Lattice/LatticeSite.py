@@ -9,7 +9,7 @@ class LatticeSite(LatticeSites):
                 site: np.ndarray = None,
                 basis: np.ndarray = None):
         if site is None:
-            site = np.array([np.nan, np.nan, np.nan])
+            site = [np.nan, np.nan, np.nan]
         return LatticeSites.__new__(cls, site, basis)
 
     def __eq__(self, other):

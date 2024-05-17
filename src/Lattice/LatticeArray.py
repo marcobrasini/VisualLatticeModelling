@@ -3,7 +3,9 @@ import numpy as np
 
 class LatticeArray(np.ndarray):
 
-    def __new__(cls, array = [], basis = None):
+    def __new__(cls,
+                array: list = [],
+                basis: np.ndarray = None):
         obj = np.asarray(array).view(cls)
         obj.basis = basis
         return obj

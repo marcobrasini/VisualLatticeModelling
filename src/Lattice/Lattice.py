@@ -36,18 +36,18 @@ class Lattice:
         self.atoms.set_sites(sites.periodic())
         return self
 
-    def supercell(self, ncell):
-        supercell = LatticeSuper(ncell)
-        name = supercell.name(self.name)
-        basis = supercell.basis(self.basis)
-        atoms = supercell.atoms(self.atoms)
+    def super_cell(self, index):
+        super_cell = LatticeSuper(index)
+        name = super_cell.make_name(self.name)
+        basis = super_cell.make_basis(self.basis)
+        atoms = super_cell.make_atoms(self.atoms, basis)
         return Lattice(name, basis, atoms)
 
-    def slabcell(self, miller):
-        slabcell = LatticeSlab(miller)
-        name = slabcell.name(self.name)
-        basis = slabcell.basis(self.basis)
-        atoms = slabcell.atoms(self.atoms)
+    def slab_cell(self, index):
+        slab_cell = LatticeSlab(index)
+        name = slab_cell.name(self.name)
+        basis = slab_cell.basis(self.basis)
+        atoms = slab_cell.atoms(self.atoms)
         return Lattice(name, basis, atoms)
 
     def load_poscar(self, poscar):
@@ -66,10 +66,9 @@ class Lattice:
         with open(poscar, 'w') as poscar:
             poscar.write(self.name + '\n')
             poscar.write('{:.10f}\n'.format(self.basis.parameter))
-            np.savetxt(poscar, self.basis, fmt='%16.10f')
+            np.savetxt(poscar, self.basis.reduced(), fmt='%16.10f')
             np.savetxt(poscar, [list(self.atoms.count().keys())], fmt='%6s')
             np.savetxt(poscar, [list(self.atoms.count().values())], fmt='%6s')
             poscar.write('Direct\n')
             np.savetxt(poscar, self.atoms.sites(), fmt='%16.10f')
             return self
-
