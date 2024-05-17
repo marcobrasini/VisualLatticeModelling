@@ -4,6 +4,7 @@ from src.Lattice.Lattice import Lattice
 from src.Lattice.LatticeAtoms import LatticeAtoms
 from src.Lattice.LatticeBasis import LatticeBasis
 from src.Lattice.LatticeBonds import LatticeBonds
+from src.Lattice.LatticePolys import LatticePolys
 from . import Example
 
 
@@ -17,10 +18,13 @@ class Test_Lattice:
     atoms = Example.atoms
     atoms = LatticeAtoms(basis=basis).make(atoms, sites=sites)
 
-    bonds = Example.bonds
     bonds = LatticeBonds(basis=basis)
     bonds = bonds.make(atoms['Zr'], atoms['O'], 2.5)
     bonds = bonds.make(atoms['Si'], atoms['O'], 2.0)
+
+    polys = LatticePolys(basis=basis)
+    polys = polys.make(atoms['Zr'], atoms['O'], 6)
+    polys = polys.make(atoms['Si'], atoms['O'], 4)
 
     poscar_input = Example.poscar_input
     poscar_output = Example.poscar_output

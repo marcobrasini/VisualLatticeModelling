@@ -4,6 +4,8 @@ from .LatticeBasis import LatticeBasis
 from .LatticeAtoms import LatticeAtoms
 from .LatticeBonds import LatticeBonds
 from .LatticePolys import LatticePolys
+from .LatticeSuper import LatticeSuper
+from .LatticeSlab import LatticeSlab
 
 
 class Lattice:
@@ -33,6 +35,20 @@ class Lattice:
         sites = self.atoms.sites() - np.array(origin)
         self.atoms.set_sites(sites.periodic())
         return self
+
+    def supercell(self, ncell):
+        supercell = LatticeSuper(ncell)
+        name = supercell.name(self.name)
+        basis = supercell.basis(self.basis)
+        atoms = supercell.atoms(self.atoms)
+        return Lattice(name, basis, atoms)
+
+    def slabcell(self, miller):
+        slabcell = LatticeSlab(miller)
+        name = slabcell.name(self.name)
+        basis = slabcell.basis(self.basis)
+        atoms = slabcell.atoms(self.atoms)
+        return Lattice(name, basis, atoms)
 
     def load_poscar(self, poscar):
         with open(poscar, 'r') as poscar:
