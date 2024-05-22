@@ -10,6 +10,11 @@ class Test_LatticeBasis:
     reduced = Example.reduced
     basis = Example.basis
     volume = np.linalg.det(basis)
+    matrix = np.array([
+        [1, 0, 0],
+        [0, 1, 0],
+        [1/3, 1/3, 1/3],
+    ])
 
     def test__init__(self):
         basis = LatticeBasis(self.reduced, parameter=self.parameter)
@@ -57,3 +62,10 @@ class Test_LatticeBasis:
     def test_volume(self):
         basis = LatticeBasis(self.reduced, parameter=self.parameter)
         assert np.isclose(basis.volume(), np.linalg.det(self.basis))
+
+    def test_transform(self):
+        basis = LatticeBasis(self.reduced, parameter=self.parameter)
+        basis = basis.transform(self.matrix)
+        assert isinstance(basis, LatticeBasis)
+        assert np.array_equal(basis, self.matrix @ self.basis)
+        assert basis.parameter == self.parameter

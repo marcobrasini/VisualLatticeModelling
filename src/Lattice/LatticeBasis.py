@@ -43,3 +43,9 @@ class LatticeBasis(np.ndarray):
 
     def volume(self) -> float:
         return np.linalg.det(self)
+
+    def transform(self, matrix):
+        parameter = self.parameter
+        self = (matrix @ self).view(LatticeBasis)
+        self.parameter = parameter
+        return self
