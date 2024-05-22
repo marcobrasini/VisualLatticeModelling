@@ -4,11 +4,13 @@ from copy import deepcopy
 from src.Lattice.LatticeAtoms import LatticeAtoms
 from src.Lattice.LatticeAtom import LatticeAtom
 from src.Lattice.LatticeSite import LatticeSite
+from src.Lattice.LatticeSites import SITES_TOLLERANCE
 from . import Example
 
 
 class Test_LatticeAtoms:
 
+    parameter = Example.parameter
     basis = Example.basis
     sites = Example.sites
     atoms = Example.atoms
@@ -22,6 +24,11 @@ class Test_LatticeAtoms:
     latticeAtoms = [
         LatticeAtom(*args) for args in zip(atoms, names, sites, vars)
     ]
+    matrix = np.array([
+        [1, 0, 0],
+        [0, 1, 0],
+        [1/3, 1/3, 1/3],
+    ])
 
     def test__init__(self):
         atoms = LatticeAtoms(deepcopy(self.latticeAtoms), basis=self.basis)
@@ -83,6 +90,37 @@ class Test_LatticeAtoms:
         atoms = atoms.set_vars(new_vars)
         assert np.array_equal(atoms.vars(), new_vars)
 
+    def test_set_basis(self):
+        atoms = LatticeAtoms(deepcopy(self.latticeAtoms), basis=self.basis)
+        positions = atoms.sites().cartesian()
+        atoms = atoms.set_basis(self.matrix @ self.basis)
+        assert isinstance(atoms, LatticeAtoms)
+        assert np.array_equal(atoms.basis, self.matrix @ self.basis)
+        for i, site in enumerate(atoms.sites().cartesian()):
+            delta = np.abs(site-positions) < self.parameter*SITES_TOLLERANCE
+            assert np.sum(np.all(delta, axis=1)) == 1
+
+    def test_set_unique(self):
+        atoms = LatticeAtoms(deepcopy(self.latticeAtoms), basis=self.basis)
+        atoms = atoms.make(self.atoms, self.names, self.sites, self.vars)
+        assert isinstance(atoms, LatticeAtoms)
+        assert len(atoms) == 2 * len(self.atoms)
+        atoms = atoms.unique()
+        assert isinstance(atoms, LatticeAtoms)
+        assert len(atoms) == len(self.atoms)
+        assert atoms.count() == self.count
+        for site in atoms.sites():
+            assert site in self.sites
+
+    def test_transform(self):
+        atoms = LatticeAtoms(deepcopy(self.latticeAtoms), basis=self.basis)
+        atoms = atoms.transform(self.matrix)
+        assert isinstance(atoms, LatticeAtoms)
+        assert np.array_equal(atoms.basis, self.matrix @ self.basis)
+        assert len(atoms) == int(len(self.atoms)/3)
+        for at, n in atoms.count().items():
+            assert self.count[at] == 3*n
+
     def test_make_atom(self):
         atoms = LatticeAtoms(basis=self.basis)
         atoms = atoms.make(self.atoms)
@@ -113,3 +151,4 @@ class Test_LatticeAtoms:
         for i, atom in enumerate(atoms):
             self.latticeAtoms[i].site.basis = self.basis
             assert atom == self.latticeAtoms[i]
+

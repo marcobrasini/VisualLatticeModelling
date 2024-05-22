@@ -49,6 +49,27 @@ class LatticeAtoms(LatticeArray):
         super().set_attribute('var', vars)
         return self
 
+    def set_basis(self, basis):
+        sites = self.sites().set_basis(basis)
+        self.set_sites(sites)
+        self.basis = basis
+        return self
+
+    def periodic(self):
+        self.set_sites(self.sites().periodic())
+        return self
+
+    def unique(self, tollerance=10):
+        index = self.sites().periodic().unique(tollerance)
+        self = self.take(index)
+        return self
+
+    def transform(self, matrix):
+        self = self.set_basis(matrix @ self.basis)
+        self = self.periodic()
+        self = self.unique()
+        return self
+
     def make(self,
              atoms: list,
              names: list = None,
