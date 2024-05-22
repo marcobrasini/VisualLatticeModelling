@@ -24,8 +24,9 @@ class LatticeSuper:
         super_sites = sites
         for n, axis in zip(np.abs(self.index), np.identity(3)):
             for i in range(1, n):
-                super_sites = np.vstack((super_sites, super_sites + i*axis))
-        return super_sites / self.index
+                super_sites = np.vstack((super_sites, sites + i*axis))
+            sites = super_sites
+        return super_sites / np.abs(self.index)
 
     def atoms(self, atoms):
         super_atoms = atoms

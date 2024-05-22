@@ -18,6 +18,8 @@ class Lattice:
                  polys: LatticePolys = None,
                  ):
         self.name = name
+        if not basis is None and not isinstance(basis, LatticeBasis):
+            basis = LatticeBasis(basis)
         self.basis = LatticeBasis() if basis is None else basis
         self.atoms = LatticeAtoms(basis=self.basis) if atoms is None else atoms
         self.bonds = LatticeBonds(basis=self.basis) if bonds is None else bonds
@@ -43,11 +45,11 @@ class Lattice:
         atoms = super_cell.make_atoms(self.atoms, basis)
         return Lattice(name, basis, atoms)
 
-    def slab_cell(self, index):
-        slab_cell = LatticeSlab(index)
-        name = slab_cell.name(self.name)
-        basis = slab_cell.basis(self.basis)
-        atoms = slab_cell.atoms(self.atoms)
+    def slab_cell(self, index, axis):
+        slab_cell = LatticeSlab(index, axis)
+        name = slab_cell.make_name(self.name)
+        basis = slab_cell.make_basis(self.basis)
+        atoms = slab_cell.make_atoms(self.atoms, basis)
         return Lattice(name, basis, atoms)
 
     def load_poscar(self, poscar):
