@@ -1,4 +1,5 @@
 import numpy as np
+from copy import deepcopy
 
 
 class LatticeArray(np.ndarray):
@@ -6,7 +7,7 @@ class LatticeArray(np.ndarray):
     def __new__(cls,
                 array: list = [],
                 basis: np.ndarray = None):
-        obj = np.asarray(array).view(cls)
+        obj = np.asarray(deepcopy(array)).view(cls)
         obj.basis = basis
         return obj
 

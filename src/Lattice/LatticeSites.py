@@ -31,20 +31,24 @@ class LatticeSites(LatticeArray):
     def periodic(self):
         basis = self.basis
         _sites = np.round(self, SITES_RESOLUTION)
+        _delta = np.zeros(self.shape)
         while np.any(0.0 > _sites) or np.any(_sites >= 1.0):
-            _sites = np.where(_sites < 0.0, _sites + 1.0, _sites)
-            _sites = np.where(_sites >= 1.0, _sites - 1.0, _sites)
-        self = _sites.view(type(self))
+            _delta = np.where(_sites < 0.0, _delta + 1.0, _delta)
+            _delta = np.where(_sites >= 1.0, _delta - 1.0, _delta)
+            _sites = np.round(self, SITES_RESOLUTION) + _delta
+        self += _delta
         self.basis = basis
         return self
 
     def centered(self):
         basis = self.basis
         _sites = np.round(self, SITES_RESOLUTION)
+        _delta = np.zeros(self.shape)
         while np.any(-0.5 >= _sites) or np.any(_sites > 0.5):
-            _sites = np.where(_sites <= -0.5, _sites + 1.0, _sites)
-            _sites = np.where(_sites > 0.5, _sites - 1.0, _sites)
-        self = _sites.view(type(self))
+            _delta = np.where(_sites <= -0.5, _delta + 1.0, _delta)
+            _delta = np.where(_sites > 0.5, _delta - 1.0, _delta)
+            _sites = np.round(self, SITES_RESOLUTION) + _delta
+        self += _delta
         self.basis = basis
         return self
 
@@ -57,6 +61,6 @@ class LatticeSites(LatticeArray):
         return np.linalg.norm(self.cartesian(), axis=-1)
 
     def unique(self, resolution=SITES_RESOLUTION):
-        sites = np.round(self, resolution)
-        sites, index = np.unique(sites, return_index=True, axis=0)
+        sites = np.round(self, resolution).view(type(self))
+        sites, index = np.unique(sites.periodic(), return_index=True, axis=0)
         return index

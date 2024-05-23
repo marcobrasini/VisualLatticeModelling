@@ -38,6 +38,20 @@ class Lattice:
         self.atoms.set_sites(sites.periodic())
         return self
 
+    def transform(self, matrix):
+        print(matrix, np.linalg.det(matrix))
+        if np.abs(np.linalg.det(matrix)) > 1:
+            ncell = np.round(np.sum(np.abs(matrix), axis=1))
+            print(ncell)
+            super_cell = LatticeSuper(ncell)
+            self.atoms = super_cell.make_atoms(self.atoms, self.basis)
+            self.atoms.set_sites(self.atoms.sites()*ncell)
+        self.basis = self.basis.transform(matrix)
+        self.atoms = self.atoms.transform(matrix)
+        self.bonds = LatticeBonds(basis=self.basis)
+        self.polys = LatticePolys(basis=self.basis)
+        return self
+
     def super_cell(self, index):
         super_cell = LatticeSuper(index)
         name = super_cell.make_name(self.name)

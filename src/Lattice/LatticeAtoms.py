@@ -59,7 +59,7 @@ class LatticeAtoms(LatticeArray):
         self.set_sites(self.sites().periodic())
         return self
 
-    def unique(self, tollerance=10):
+    def unique(self, tollerance=6):
         index = self.sites().periodic().unique(tollerance)
         self = self.take(index)
         return self

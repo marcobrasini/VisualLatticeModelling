@@ -21,9 +21,9 @@ class Test_LatticeSuper:
     supersites = sites
     supersites = np.vstack((supersites, supersites + np.array([0, 1, 0])))
     supersites = np.vstack((supersites, supersites + np.array([0, 0, 1])))
-    supersites[:, 0] /= index[0]
-    supersites[:, 1] /= index[1]
-    supersites[:, 2] /= index[2]
+    supersites[:, 0] /= np.abs(index[0])
+    supersites[:, 1] /= np.abs(index[1])
+    supersites[:, 2] /= np.abs(index[2])
     atoms = Example.atoms
     superatoms = np.hstack((atoms, atoms, atoms, atoms))
 

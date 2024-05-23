@@ -1,5 +1,5 @@
 import numpy as np
-
+from copy import deepcopy
 from src.Lattice.Lattice import Lattice
 from src.Lattice.LatticeAtoms import LatticeAtoms
 from src.Lattice.LatticeBasis import LatticeBasis
@@ -28,6 +28,17 @@ class Test_Lattice:
 
     poscar_input = Example.poscar_input
     poscar_output = Example.poscar_output
+
+    matrix = np.array([
+        [1, 0, 0],
+        [0, 1, 0],
+        [1 / 3, 1 / 3, 1 / 3],
+    ])
+    matrix_super = np.array([
+        [-2/3, +4/3, +1/3],
+        [+4/3, -2/3, +1/3],
+        [-2/3, -2/3, +1/3],
+    ])
 
     def test__init__default(self):
         lattice = Lattice()
@@ -82,6 +93,16 @@ class Test_Lattice:
             assert bond == self.bonds[i]
         assert len(lattice.polys) == 0
         assert np.array_equal(lattice.polys.basis, self.basis)
+
+    def test_transform(self):
+        lattice = Lattice("", deepcopy(self.basis), deepcopy(self.atoms))
+        lattice = lattice.transform(self.matrix)
+        assert len(lattice.atoms) == int(len(self.atoms)/3)
+
+    def test_transform_super(self):
+        lattice = Lattice("", deepcopy(self.basis), deepcopy(self.atoms))
+        lattice.transform(self.matrix_super)
+        assert len(lattice.atoms) == int(len(self.atoms)*4/3)
 
     def test_load_poscar(self):
         lattice = Lattice().load_poscar(self.poscar_input)
