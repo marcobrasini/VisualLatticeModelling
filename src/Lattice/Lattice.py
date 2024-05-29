@@ -66,7 +66,8 @@ class Lattice:
         atoms = slab_cell.make_atoms(self.atoms, basis)
         return Lattice(name, basis, atoms)
 
-    def load_poscar(self, poscar):
+    @classmethod
+    def load_poscar(cls, poscar):
         with open(poscar, 'r') as poscar:
             name = poscar.readline().strip()
             parameter = float(poscar.readline())
@@ -76,7 +77,8 @@ class Lattice:
             sites = np.loadtxt(poscar, float, skiprows=1, max_rows=len(atoms))
             basis = LatticeBasis(basis, parameter=parameter)
             atoms = LatticeAtoms(basis=basis).make(atoms, sites=sites)
-            return Lattice(name, basis, atoms)
+            return cls(name, basis, atoms)
+
 
     def save_poscar(self, poscar):
         with open(poscar, 'w') as poscar:

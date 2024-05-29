@@ -105,7 +105,7 @@ class Test_Lattice:
         assert len(lattice.atoms) == int(len(self.atoms)*4/3)
 
     def test_load_poscar(self):
-        lattice = Lattice().load_poscar(self.poscar_input)
+        lattice = Lattice.load_poscar(self.poscar_input)
         assert np.array_equal(lattice.basis, self.basis)
         assert lattice.basis.parameter == self.basis.parameter
         assert np.array_equal(lattice.atoms, self.atoms)
@@ -113,7 +113,7 @@ class Test_Lattice:
 
     def test_save_poscar(self):
         Lattice("", self.basis, self.atoms).save_poscar(self.poscar_output)
-        saved = Lattice().load_poscar(self.poscar_output)
+        saved = Lattice.load_poscar(self.poscar_output)
         assert np.allclose(saved.basis, self.basis)
         assert saved.basis.parameter == self.basis.parameter
         assert saved.atoms.count() == self.atoms.count()
