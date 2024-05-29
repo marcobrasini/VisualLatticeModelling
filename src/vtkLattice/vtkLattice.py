@@ -10,6 +10,7 @@ from .vtkLatticePolys import vtkLatticePolys
 class vtkLattice:
 
     def __init__(self, lattice: Lattice):
+        self.name = lattice.name
         self.cell = vtkLatticeCell(lattice.basis)
         self.basis = vtkLatticeBasis(lattice.basis)
         self.atoms = vtkLatticeAtoms(lattice.atoms)

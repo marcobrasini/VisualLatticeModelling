@@ -42,6 +42,8 @@ class vtkViewer(QVTKRenderWindowInteractor):
     def load_lattice(self, vtklattice: vtkLattice):
         vtklattice.render(self.renderer)
         self.lattice.append(vtklattice)
+        if not self.name:
+            self.name = vtklattice.name
         return self
 
     def close(self):
