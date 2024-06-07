@@ -23,6 +23,10 @@ class vtkLatticeAtoms(vtkArray):
         for atom in self:
             atom.render(renderer)
 
+    def delete(self, renderer):
+        for atom in self:
+            atom.delete(renderer)
+
     def translate(self, displacement):
         for atom in self:
             atom.translate(displacement)
@@ -30,3 +34,7 @@ class vtkLatticeAtoms(vtkArray):
     def draw(self, sphere=True, arrow=True, invert=False):
         for atom in self:
             atom.draw(sphere, arrow, invert)
+
+    def visible(self, visibility):
+        for entity in self:
+            entity.setVisible(visibility)

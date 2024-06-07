@@ -28,7 +28,7 @@ class vtkPickerArea(vtkAreaPicker):
                                 [x0, y1, 0]])
 
 
-class vtkViewerPicker(vtkPicker):
+class vtkWidgetPicker(vtkPicker):
 
     def __init__(self,
                  controller: vtkInteractorStyle,

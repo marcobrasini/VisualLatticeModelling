@@ -2,7 +2,7 @@ from vtkmodules.vtkIOImage import vtkPNGWriter
 from vtkmodules.vtkRenderingCore import vtkWindowToImageFilter
 
 
-class vtkViewerPrinter(vtkPNGWriter):
+class vtkWidgetPrinter(vtkPNGWriter):
 
     def __init__(self):
         super().__init__()

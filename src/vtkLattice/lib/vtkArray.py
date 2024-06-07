@@ -30,6 +30,10 @@ class vtkArray(vtkOutlet):
         for actor in self.actor():
             renderer.AddActor(actor)
 
+    def delete(self, renderer: vtkRenderer):
+        for actor in self.actor():
+            renderer.RemoveActor(actor)
+
     def translate(self, displacement):
         for actor in self.actor():
             actor.SetPosition(displacement)
@@ -41,3 +45,7 @@ class vtkArray(vtkOutlet):
     def rescale(self, factor):
         for actor in self.actor():
             actor.SetScale(factor)
+
+    def visible(self, visibility):
+        for entity in self:
+            entity.setVisible(visibility)
