@@ -1,11 +1,13 @@
 from src.vtkLattice.vtkViewer import vtkViewer
 from src.vtkLattice.vtkLattice import vtkLattice
-from . import Example, openqt
+from . import Example
 
 
-@openqt
-def test_viewer():
-    vtkviewer = vtkViewer()
-    vtkviewer.name = "vtkViewer"
-    vtkviewer.load_lattice(vtkLattice(Example.lattice))
-    return vtkviewer
+class Test_vtkViewer:
+
+    lattice = Example.lattice
+
+    def test_vtkViewer(self):
+        vtkviewer = vtkViewer("vtkViewer")
+        vtkviewer.load_lattice(vtkLattice(self.lattice))
+        assert vtkviewer.name == "vtkViewer"

@@ -1,16 +1,16 @@
 import numpy as np
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
-from .vtkViewerPicker import vtkViewerPicker
+from .vtkWidgetPicker import vtkWidgetPicker
 from .vtkDrawerPicker import vtkDrawerPicker
 from .vtkDrawer import vtkDrawer
 
 
-class vtkViewerController(vtkInteractorStyleTrackballCamera):
+class vtkWidgetController(vtkInteractorStyleTrackballCamera):
 
     def __init__(self, viewer):
         super().__init__()
         self.viewer = viewer
-        self.viewerPicker = vtkViewerPicker(self)
+        self.viewerPicker = vtkWidgetPicker(self)
         self.drawerPicker = vtkDrawerPicker(self)
         self.drawer = vtkDrawer(self)
         self.picker = self.viewerPicker

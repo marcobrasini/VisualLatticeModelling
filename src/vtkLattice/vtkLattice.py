@@ -17,6 +17,12 @@ class vtkLattice:
         self.bonds = vtkLatticeBonds(lattice.bonds, self.atoms)
         self.polys = vtkLatticePolys(lattice.polys, self.atoms)
 
+    def parent(self):
+        return self._parent
+
+    def setParent(self, parent):
+        self._parent = parent
+
     def render(self, renderer: vtkRenderer):
         self.cell.render(renderer)
         self.basis.render(renderer)

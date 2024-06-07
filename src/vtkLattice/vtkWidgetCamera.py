@@ -5,7 +5,7 @@ from vtkmodules.vtkInteractionWidgets import (
     vtkCompassWidget
 )
 
-class vtkViewerCamera(vtkCompassWidget):
+class vtkWidgetCamera(vtkCompassWidget):
 
     def __init__(self, renderer):
         super().__init__()
@@ -16,7 +16,7 @@ class vtkViewerCamera(vtkCompassWidget):
         self.SetRepresentation(self.compassRepresentation)
         self.AddObserver(
             vtkCommand.WidgetValueChangedEvent,
-            vtkViewerCamera.CompassWidgetValueChangedCallback
+            vtkWidgetCamera.CompassWidgetValueChangedCallback
         )
         self.SetDistance(6)
         self.SetTilt(10)
