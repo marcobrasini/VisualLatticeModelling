@@ -19,7 +19,6 @@ class MyTabWidget(QTabWidget):
     def __init__(self, parent=None, tabWidget=QWidget):
         super().__init__(parent=parent)
         self.tabWidget = tabWidget
-        self.setAcceptDrops(True)
         self.setTabBar(MyTabBar(self))
         self.defaultTab(MyTabWidget.MyTabDefault())
 
@@ -28,13 +27,23 @@ class MyTabWidget(QTabWidget):
         self.tabBar().defaultTab()
 
     def appendTab(self):
+        widget = self.tabWidget()
         index = self.count() - 1
-        super().insertTab(index, self.tabWidget(), None)
+        super().insertTab(index, widget, None)
         self.tabBar().insertTab(index, None)
         self.setCurrentIndex(index)
 
-    def removeTab(self, index):
+    def insertTab(self, index: int, widget: QWidget, name: str = None):
+        super().insertTab(index, widget, None)
+        self.tabBar().insertTab(index, name)
+        self.setCurrentIndex(index)
+
+    def removeTab(self, index: int):
         if index != self.count() - 1:
             self.widget(index).close()
             self.tabBar().removeTab(index)
             super().removeTab(index)
+
+    def clear(self):
+        for i in range(self.count() - 1):
+            self.removeTab(0)

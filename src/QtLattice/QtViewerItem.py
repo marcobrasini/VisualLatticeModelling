@@ -44,6 +44,9 @@ class QtViewerItem:
     def isVTKLatticeItem(self):
         return isinstance(self._vtk, vtkLattice) or self._vtk == self.VTKLatticeItem
 
+    def vtk(self):
+        return self._vtk
+
     def parent(self):
         return self._parent
 
