@@ -1,17 +1,18 @@
 from unittest import TestCase
+from vtkLattice import vtkViewer, vtkLattice
 from src.QtLattice.QtViewer import QtViewer
 from .test_QtViewerModel import TestQtViewerModel
-from . import openqt
+from . import openqt, Example
 
 
 class TestQtViewer(TestCase):
 
-    vtkviewers = TestQtViewerModel.vtkviewers
+    vtkviewers = TestQtViewerModel.exampleViewers(TestQtViewerModel)
 
     @openqt
     def test_QtViewer(self):
         qtviewer = QtViewer()
         qtviewer.setupModel(self.vtkviewers)
-        qtviewer.model.insertViewer(self.vtkviewers[1], 3)
-        qtviewer.model.removeViewer(3)
+        qtviewer.model.insertViewer(vtkViewer('vtklatticeC'), 2)
+        qtviewer.model.insertLattice(vtkLattice.load_poscar(Example.POSCAR), 2, 0)
         return qtviewer

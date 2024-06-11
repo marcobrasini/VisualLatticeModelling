@@ -22,6 +22,8 @@ class QtViewer(QWidget):
         self.tab.viewerRemoved.connect(self.removeViewer)
         self.model.viewerInserted.connect(self.insertViewer)
         self.tab.viewerInserted.connect(self.insertViewer)
+        self.model.latticeInserted.connect(self.insertLattice)
+        self.tab.latticeInserted.connect(self.insertLattice)
 
     def removeViewer(self, emitter: QObject, i: int):
         receiver = self.tab if emitter == self.model else self.model
@@ -30,6 +32,10 @@ class QtViewer(QWidget):
     def insertViewer(self, emitter: QObject, i: int):
         receiver = self.tab if emitter == self.model else self.model
         receiver.insertViewer(emitter.viewer(i), i, callback=False)
+
+    def insertLattice(self, emitter: QObject, i: int, j: int):
+        receiver = self.tab if emitter == self.model else self.model
+        receiver.insertLattice(emitter.lattice(i,j), i, j, callback=False)
 
     def setupModel(self, model):
         self.model.setupModel(model)
