@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QAbstractItemView, QLabel, QSizePolicy
+from PyQt5.QtWidgets import QLabel, QSizePolicy
 from PyQt5.QtCore import QModelIndex, QObject, pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap, QDragEnterEvent, QDropEvent
 from vtkLattice import vtkWidget, vtkViewer, vtkLattice
@@ -15,7 +15,7 @@ class QtViewerTabDefault(QLabel):
         self.resize(self.pixmap().size())
 
 
-class QtViewerTab(QAbstractItemView):
+class QtViewerTab(MyTabWidget):
 
     viewerRemoved = pyqtSignal(QObject, int)
     viewerInserted = pyqtSignal(QObject, int)
@@ -23,60 +23,59 @@ class QtViewerTab(QAbstractItemView):
     latticeInserted = pyqtSignal(QObject, int, int)
 
     def __init__(self, parent=None):
-        super().__init__(parent)
-        self.widget = MyTabWidget(self, QtViewerTabDefault)
-        self.widget.setAcceptDrops(True)
-        self.widget.widgetOpenRequested.connect(self.openViewer)
-        self.widget.widgetCloseRequested.connect(self.closeViewer)
-        self.setViewport(self.widget)
-
-
-    def moveCursor(self, cursorAction, modifiers):
-        return QModelIndex()
+        super().__init__(parent, QtViewerTabDefault)
+        self.setAcceptDrops(True)
+        self.widgetOpenRequested.connect(self.openViewer)
+        self.widgetCloseRequested.connect(self.closeViewer)
 
     def setModel(self, model):
-        super().setModel(model)
-        self.widget.clear()
-        self.widget.widgetRemoved.connect(self.emit_viewerRemoved)
-        self.widget.widgetInserted.connect(self.emit_viewerInserted)
-        for i in range(self.model().rowCount(QModelIndex())):
-            viewer = self.model().viewer(i)
+        self.clear()
+        self.widgetRemoved.connect(self.emit_viewerRemoved)
+        self.widgetInserted.connect(self.emit_viewerInserted)
+        for i in range(model.rowCount(QModelIndex())):
+            viewer = model.viewer(i)
             self.insertViewer(viewer, i, False)
 
     def viewer(self, i) -> vtkViewer:
-        return self.widget.widget(i).viewer
+        return self.widget(i).viewer
 
     def lattice(self, i, j) -> vtkLattice:
         return self.viewer(i).lattice[j]
 
     def openViewer(self, index: int):
         widget = vtkWidget(vtkViewer(f"vtkViewer[{index}]"))
-        self.widget.insertTab(index, widget, widget.name())
+        self.insertTab(index, widget, widget.name())
 
     def closeViewer(self, index: int):
-        self.widget.removeTab(index)
+        self.removeTab(index)
 
     def insertViewer(self, viewer: vtkViewer, i: int, callback: bool = True):
         widget = vtkWidget(viewer)
         widget.render()
         if not callback:
-            self.widget.widgetInserted.disconnect()
-        self.widget.insertTab(i, widget, widget.name())
-        self.widget.widgetInserted.connect(self.emit_viewerInserted)
+            self.widgetInserted.disconnect()
+        self.insertTab(i, widget, widget.name())
+        self.widgetInserted.connect(self.emit_viewerInserted)
 
     def removeViewer(self, index: int, callback: bool = True):
         if not callback:
-            self.widget.widgetRemoved.disconnect()
-        self.widget.removeTab(index)
-        self.widget.widgetRemoved.connect(self.emit_viewerRemoved)
+            self.widgetRemoved.disconnect()
+        self.removeTab(index)
+        self.widgetRemoved.connect(self.emit_viewerRemoved)
 
     def appendLattice(self, lattice: vtkLattice, i: int, callback: bool = True):
-        self.widget.widget(i).appendLattice(lattice)
+        self.widget(i).appendLattice(lattice)
         if callback:
             self.emit_latticeInserted(i, len(self.viewer(i))-1)
 
     def insertLattice(self, lattice: vtkLattice, i: int, j: int, callback: bool = True):
-        self.widget.widget(i).insertLattice(lattice, j)
+        self.widget(i).insertLattice(lattice, j)
+        if callback:
+            self.emit_latticeInserted(i, j)
+
+    def removeLattice(self, i: int, j: int, callback: bool = True):
+        print(i, j)
+        self.widget(i).removeLattice(j)
         if callback:
             self.emit_latticeInserted(i, j)
 
@@ -90,8 +89,8 @@ class QtViewerTab(QAbstractItemView):
         self.latticeInserted.emit(self, i, j)
 
     def closeEvent(self, event):
-        for i in range(self.widget.count()):
-            self.widget.widget(i).closeEvent(event)
+        for i in range(self.count()):
+            self.widget(i).closeEvent(event)
         return super().closeEvent(event)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
@@ -105,9 +104,9 @@ class QtViewerTab(QAbstractItemView):
     def dropEvent(self, event: QDropEvent):
         for poscar in event.mimeData().text().splitlines():
             poscar = poscar.strip().split('///')[1].replace('\\', '/')
-            index = self.widget.currentIndex()
+            index = self.currentIndex()
             lattice = vtkLattice.load_poscar(poscar)
-            if self.widget.count() > 1:
+            if self.count() > 1:
                 self.appendLattice(lattice, index)
             else:
                 self.openViewer(index)

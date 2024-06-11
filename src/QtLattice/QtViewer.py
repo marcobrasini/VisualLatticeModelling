@@ -9,10 +9,10 @@ class QtViewer(QWidget):
 
     def __init__(self, parent = None):
         super().__init__(parent=parent)
+        self.viewer = QSplitter(Qt.Horizontal)
         self.model = QtViewerModel(self)
         self.tree = QtViewerTree(self)
         self.tab = QtViewerTab(self)
-        self.viewer = QSplitter(Qt.Horizontal)
         self.viewer.addWidget(self.tree)
         self.viewer.addWidget(self.tab)
         self.setLayout(QGridLayout())
@@ -24,6 +24,8 @@ class QtViewer(QWidget):
         self.tab.viewerInserted.connect(self.insertViewer)
         self.model.latticeInserted.connect(self.insertLattice)
         self.tab.latticeInserted.connect(self.insertLattice)
+        self.model.latticeRemoved.connect(self.removeLattice)
+        self.tab.latticeRemoved.connect(self.removeLattice)
 
     def removeViewer(self, emitter: QObject, i: int):
         receiver = self.tab if emitter == self.model else self.model
@@ -36,6 +38,10 @@ class QtViewer(QWidget):
     def insertLattice(self, emitter: QObject, i: int, j: int):
         receiver = self.tab if emitter == self.model else self.model
         receiver.insertLattice(emitter.lattice(i,j), i, j, callback=False)
+
+    def removeLattice(self, emitter: QObject, i: int, j: int):
+        receiver = self.tab if emitter == self.model else self.model
+        receiver.removeLattice(i, j, callback=False)
 
     def setupModel(self, model):
         self.model.setupModel(model)
