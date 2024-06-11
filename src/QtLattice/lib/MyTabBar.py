@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QTabBar, QLineEdit, QToolButton
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtGui import QMouseEvent
 
 
@@ -36,6 +37,8 @@ class MyTabBarLabel(QLineEdit):
 
 class MyTabBar(QTabBar):
 
+    tabOpenRequested = pyqtSignal(int)
+
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.setUpdatesEnabled(True)
@@ -43,8 +46,7 @@ class MyTabBar(QTabBar):
         self.setMovable(True)
         self.labels = []
         self.appendTab = MyTabBarAdder()
-        self.appendTab.clicked.connect(self.parent().appendTab)
-        self.tabCloseRequested.connect(self.parent().removeTab)
+        self.appendTab.clicked.connect(self.emit_tabOpenRequested)
         self.tabBarDoubleClicked.connect(self.renameTab)
         self.currentChanged.connect(self.changeTab)
         self.tabMoved.connect(self.movedTab)
@@ -80,6 +82,9 @@ class MyTabBar(QTabBar):
     def movedTab(self, from_index, to_index):
         label = self.labels.pop(from_index)
         self.labels.insert(to_index, label)
+
+    def emit_tabOpenRequested(self):
+        self.tabOpenRequested.emit(self.count() - 1)
 
     def mousePressEvent(self, event: QMouseEvent):
         if self.isMovable():

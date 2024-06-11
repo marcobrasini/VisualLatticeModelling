@@ -76,15 +76,14 @@ class QtViewerItem:
     def row(self):
         return self.parent().children().index(self)
 
+    def name(self):
+        return self._data[0]
+
     def insertChild(self, index, child):
         if 0 <= index <= len(self._children):
             child._parent = self
             self._children.insert(index, child)
-            return True
-        return False
 
     def removeChild(self, index):
         if 0 <= index < len(self._children):
             del self._children[index]
-            return True
-        return False

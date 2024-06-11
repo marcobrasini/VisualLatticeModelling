@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QSplitter, QGridLayout
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QObject
 from .QtViewerModel import QtViewerModel
 from .QtViewerTree import QtViewerTree
 from .QtViewerTab import QtViewerTab
@@ -18,6 +18,18 @@ class QtViewer(QWidget):
         self.setLayout(QGridLayout())
         self.layout().addWidget(self.viewer)
 
+        self.model.viewerRemoved.connect(self.removeViewer)
+        self.tab.viewerRemoved.connect(self.removeViewer)
+        self.model.viewerInserted.connect(self.insertViewer)
+        self.tab.viewerInserted.connect(self.insertViewer)
+
+    def removeViewer(self, emitter: QObject, i: int):
+        receiver = self.tab if emitter == self.model else self.model
+        receiver.removeViewer(i, callback=False)
+
+    def insertViewer(self, emitter: QObject, i: int):
+        receiver = self.tab if emitter == self.model else self.model
+        receiver.insertViewer(emitter.viewer(i), i, callback=False)
 
     def setupModel(self, model):
         self.model.setupModel(model)

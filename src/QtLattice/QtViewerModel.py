@@ -1,64 +1,15 @@
+from PyQt5.QtCore import QModelIndex, QObject, pyqtSignal
 from vtkLattice import vtkLattice, vtkViewer
-from PyQt5.QtCore import Qt, QAbstractItemModel, QModelIndex
+from .QtViewerBase import QtViewerBase
 from .QtViewerItem import QtViewerItem
 
 
-class QtViewerModel(QAbstractItemModel):
+class QtViewerModel(QtViewerBase):
 
-    def __init__(self, parent=None):
-        super().__init__(parent=parent)
-        self._root = QtViewerItem(None)
-        self._root._data = ['root']
-
-    # abstract methods
-    def rowCount(self, parent: QModelIndex = QModelIndex()):
-        item = parent.internalPointer() if parent.isValid() else self._root
-        return item.childCount()
-
-    def columnCount(self, parent: QModelIndex = QModelIndex()):
-        item = parent.internalPointer() if parent.isValid() else self._root
-        return item.dataCount()
-
-    def index(self, row: int, column: int, parent: QModelIndex = QModelIndex()):
-        if self.hasIndex(row, column, parent):
-            item = parent.internalPointer() if parent.isValid() else self._root
-            child = item.child(row)
-            if child:
-                return self.createIndex(row, column, child)
-        return QModelIndex()
-
-    def parent(self, index: QModelIndex):
-        if index.isValid():
-            item = index.internalPointer()
-            parent = item.parent()
-            if parent and parent != self._root:
-                return self.createIndex(parent.row(), 0, parent)
-        return QModelIndex()
-
-    def data(self, index: QModelIndex, role=Qt.DisplayRole):
-        if index.isValid() and role == Qt.DisplayRole:
-            item = index.internalPointer()
-            return item.data(index.column())
-        return None
-
-    def setData(self, index, value, role=Qt.EditRole):
-        if index.isValid():
-            if role == Qt.EditRole:
-                item = index.internalPointer()
-                item.setData(value)
-                self.dataChanged.emit(index, index, [Qt.DisplayRole])
-                return True
-        return False
-
-    def flags(self, index):
-        if not index.isValid():
-            return Qt.NoItemFlags
-        return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
-
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole and orientation == Qt.Horizontal:
-            return "QtViewer"
-        return None
+    viewerRemoved = pyqtSignal(QObject, int)
+    viewerInserted = pyqtSignal(QObject, int)
+    latticeRemoved = pyqtSignal(QObject, int, int)
+    latticeInserted = pyqtSignal(QObject, int, int)
 
     # Custom methods
     def setupModel(self, viewerList):
@@ -67,49 +18,59 @@ class QtViewerModel(QAbstractItemModel):
             viewerItem.setVTKViewerItem(viewer)
             self._root.append(viewerItem)
 
-    def addItem(self,
-                parent: QtViewerItem|QModelIndex,
-                index:  QModelIndex,
-                item: QtViewerItem,
-        ):
-        if isinstance(parent, QModelIndex):
-            parent = parent.internalPointer()
-        self.beginInsertRows(index, index.row(), index.row())
-        parent.insertChild(index.row(), item)
-        self.endInsertRows()
+    def printModel(self, *args):
+        print(f"QtViewer:")
+        for i in range(self.root().childCount()):
+            viewer = self.itemViewer(i)
+            print(f"\t[{i}]:\t{viewer.name()}")
+            for j in range(viewer.childCount()):
+                lattice = self.itemLattice(i, j)
+                print(f"\t\t[{j}]:\t{lattice.name()}")
 
-    def delItem(self,
-                parent: QtViewerItem|QModelIndex,
-                index: QModelIndex
-        ):
-        if isinstance(parent, QModelIndex):
-            parent = parent.internalPointer()
-        self.beginInsertRows(index, index.row(), index.row())
-        parent.removeChild(index.row())
-        self.endInsertRows()
+    def indexViewer(self, i: int) -> QModelIndex:
+        return self.index(i, 0)
 
-    def viewer(self, index: int) -> QModelIndex:
-        return self.index(index, 0)
+    def indexLattice(self, i: int, j: int) -> QModelIndex:
+        return self.index(j, 0, self.indexViewer(i))
+    #
+    def itemViewer(self, i: int) -> QModelIndex:
+        return self.indexViewer(i).internalPointer()
 
-    def lattice(self, viewer: QModelIndex, index: int) -> QModelIndex:
-        return self.index(index, 0, viewer)
+    def itemLattice(self, i: int, j: int) -> QModelIndex:
+        return self.indexLattice(i, j).internalPointer()
 
-    def insertViewer(self, index: int, vtkviewer: vtkViewer):
-        viewer = self.createIndex(index, 0, self._root)
-        item = QtViewerItem(self._root).setVTKViewerItem(vtkviewer)
-        self.addItem(self._root, viewer, item)
+    def viewer(self, i: int) -> QModelIndex:
+        return self.itemViewer(i).vtk()
 
-    def removeViewer(self, index: int):
-        viewer = self.viewer(index)
-        self.delItem(self._root, viewer)
+    def lattice(self, i: int, j: int) -> QModelIndex:
+        return self.itemLattice(i, j).vtk()
 
-    def insertLattice(self, index: int, vtklattice: vtkLattice):
-        viewer = self.viewer(index).internalPointer()
-        lattice = self.createIndex(viewer.childCount(), 0, viewer)
-        item = QtViewerItem(viewer).setVTKLatticeItem(vtklattice)
-        self.addItem(viewer, lattice, item)
+    def insertViewer(self, vtkviewer: vtkViewer, i: int, callback: bool = True):
+        parent = self.root()
+        viewer = self.createIndex(i, 0, parent)
+        item = QtViewerItem(parent).setVTKViewerItem(vtkviewer)
+        self.addItem(parent, viewer, item)
+        if callback:
+            self.viewerInserted.emit(self, i)
 
-    def removeLattice(self, viewer: int, index: int):
-        viewer = self.viewer(viewer)
-        lattice = self.lattice(viewer, index)
-        self.delItem(viewer, lattice)
+    def insertLattice(self, vtklattice: vtkLattice, i: int, j: int, callback: bool = True):
+        parent = self.itemViewer(i)
+        lattice = self.createIndex(j, 0, parent)
+        item = QtViewerItem(parent).setVTKLatticeItem(vtklattice)
+        self.addItem(parent, lattice, item)
+        if callback:
+            self.latticeInserted.emit(self, i, j)
+
+    def removeViewer(self, i: int, callback: bool = True):
+        parent = self.root()
+        viewer = self.indexViewer(i)
+        self.delItem(parent, viewer)
+        if callback:
+            self.viewerRemoved.emit(self, i)
+
+    def removeLattice(self, i: int, j: int, callback: bool = True):
+        parent = self.itemViewer(i)
+        lattice = self.indexLattice(i, j)
+        self.delItem(parent, lattice)
+        if callback:
+            self.latticeRemoved.emit(self, i, j)

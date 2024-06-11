@@ -1,48 +1,38 @@
-from PyQt5.QtWidgets import QTabWidget, QWidget, QLabel, QSizePolicy
-from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QTabWidget, QWidget
+from PyQt5.QtCore import pyqtSignal
 from .MyTabBar import MyTabBar
 
 
 class MyTabWidget(QTabWidget):
 
-    class MyTabDefault(QLabel):
+    widgetRemoved = pyqtSignal(int)
+    widgetInserted = pyqtSignal(int)
+    widgetOpenRequested = pyqtSignal(int)
+    widgetCloseRequested = pyqtSignal(int)
 
-        def __init__(self, parent=None):
-            super().__init__(parent=parent)
-            self.setScaledContents(True)
-            self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
-            self.setPixmap(QPixmap('utils/defaultTitle.png'))
-            self.setAlignment(Qt.AlignCenter)
-            self.resize(self.pixmap().size())
-
-    def __init__(self, parent=None, tabWidget=QWidget):
+    def __init__(self, parent=None, addWidget=QWidget):
         super().__init__(parent=parent)
-        self.tabWidget = tabWidget
         self.setTabBar(MyTabBar(self))
-        self.defaultTab(MyTabWidget.MyTabDefault())
+        self.defaultTab(addWidget())
+        self.widgetCloseRequested = self.tabBar().tabCloseRequested
+        self.widgetOpenRequested = self.tabBar().tabOpenRequested
 
     def defaultTab(self, widget):
         self.addTab(widget, None)
         self.tabBar().defaultTab()
 
-    def appendTab(self):
-        widget = self.tabWidget()
-        index = self.count() - 1
-        super().insertTab(index, widget, None)
-        self.tabBar().insertTab(index, None)
-        self.setCurrentIndex(index)
-
     def insertTab(self, index: int, widget: QWidget, name: str = None):
         super().insertTab(index, widget, None)
         self.tabBar().insertTab(index, name)
         self.setCurrentIndex(index)
+        self.widgetInserted.emit(index)
 
     def removeTab(self, index: int):
         if index != self.count() - 1:
             self.widget(index).close()
             self.tabBar().removeTab(index)
             super().removeTab(index)
+            self.widgetRemoved.emit(index)
 
     def clear(self):
         for i in range(self.count() - 1):

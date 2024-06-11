@@ -17,6 +17,7 @@ class TestQtViewerModel(TestCase):
     vtkviewerB.load_lattice(vtkLattice(Lattice('lattice4')))
 
     vtkviewerC = vtkViewer("vtkViewerC")
+    # vtkviewerC.load_lattice(vtkLattice(Lattice('lattice5')))
 
     vtkviewers = [
         vtkviewerA,
@@ -31,9 +32,9 @@ class TestQtViewerModel(TestCase):
 
         model = QtViewerModel()
         model.setupModel(self.vtkviewers)
-        model.insertViewer(2, vtkViewer('newViewer'))
-        model.insertLattice(2, vtkLattice(Lattice('lattice_new')))
-        model.removeLattice(0, 2)
+        model.insertViewer(vtkViewer('newViewer'), 2)
+        model.insertLattice(vtkLattice(Lattice('lattice_new')), 2, 0)
+        model.removeViewer(3)
         view = QTreeView()
         view.setModel(model)
         return view
