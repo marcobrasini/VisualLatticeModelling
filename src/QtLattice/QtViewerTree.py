@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QTreeView, QMenu, QAction
+from PyQt5.QtWidgets import QTreeView, QMenu, QAction, QAbstractItemView
 from PyQt5.QtCore import Qt, QPoint, QObject, pyqtSignal
 
 
@@ -9,6 +9,7 @@ class QtViewerTree(QTreeView):
     def __init__(self, parent = None):
         super().__init__(parent=parent)
         self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.customContextMenuRequested.connect(self.contextMenu)
 
     def contextMenu(self, point: QPoint):

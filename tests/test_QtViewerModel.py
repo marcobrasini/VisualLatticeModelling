@@ -30,6 +30,11 @@ class TestQtViewerModel(TestCase):
 
         model = QtViewerModel()
         model.setupModel(self.exampleViewers())
+        model.insertViewer(vtkViewer('vtkViewer_new'), 0)
+        model.insertLattice(vtkLattice(Lattice('vtkLattice_new')), 0, 0)
+        model.removeLattice(2, 1)
+        model.printModel()
+
         view = QTreeView()
         view.setModel(model)
         return view

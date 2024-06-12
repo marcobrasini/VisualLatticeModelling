@@ -27,11 +27,11 @@ class QtViewerTab(MyTabWidget):
         self.setAcceptDrops(True)
         self.widgetOpenRequested.connect(self.openViewer)
         self.widgetCloseRequested.connect(self.closeViewer)
+        self.widgetRemoved.connect(self.emit_viewerRemoved)
+        self.widgetInserted.connect(self.emit_viewerInserted)
 
     def setModel(self, model):
         self.clear()
-        self.widgetRemoved.connect(self.emit_viewerRemoved)
-        self.widgetInserted.connect(self.emit_viewerInserted)
         for i in range(model.rowCount(QModelIndex())):
             viewer = model.viewer(i)
             self.insertViewer(viewer, i, False)

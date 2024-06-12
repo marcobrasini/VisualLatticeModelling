@@ -1,89 +1,55 @@
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QStandardItem
 from vtkLattice import vtkLattice, vtkViewer
 
 
-
-class QtViewerItem:
+class QtViewerItem(QStandardItem):
 
     VTKRootItem = 0
     VTKViewerItem = 1
     VTKLatticeItem = 2
 
-    def __init__(self, _parent):
-        self._parent = _parent
-        self._children = []
-        self._data = []
+    def __init__(self, parent = None):
+        super().__init__(parent)
+        self.name = self.data
+        self.setName = self.setData
+
+    def data(self, role=Qt.DisplayRole):
+        if role == Qt.DisplayRole:
+            return self.vtk.name
+        return super().data(role)
+
+    def setData(self, value, role=Qt.EditRole):
+        if role == Qt.DisplayRole or role == Qt.EditRole:
+            self.vtk.name = value
+        return super().setData(value, role)
 
     def setVTKLatticeItem(self, lattice = None):
         if lattice is None:
-            self._vtk = QtViewerItem.VTKLatticeItem
+            self.vtk = QtViewerItem.VTKLatticeItem
             return self
-        # if self._parent and isinstance(lattice, vtkLattice):
-        self._vtk = lattice
-        self._data = [lattice.name]
+        self.vtk = lattice
+        self.setData(lattice.name)
+        self.setCheckable(True)
+        self.setCheckState(Qt.Checked)
         return self
 
     def setVTKViewerItem(self, viewer = None):
         if viewer is None:
-            self._vtk = QtViewerItem.VTKLatticeItem
+            self.vtk = QtViewerItem.VTKLatticeItem
             return self
-        # if self._parent and isinstance(viewer, vtkViewer):
-        self._vtk = viewer
-        self._data = [viewer.name]
+        self.vtk = viewer
+        self.setData(viewer.name)
         for lattice in viewer:
             latticeItem = QtViewerItem(self)
             latticeItem.setVTKLatticeItem(lattice)
-            self.append(latticeItem)
+            self.appendRow(latticeItem)
         return self
 
-    def isVTKRootItem(self):
-        return self._vtk is None or self._vtk == self.VTKRootItem
-
     def isVTKViewerItem(self):
-        return isinstance(self._vtk, vtkViewer) or self._vtk == self.VTKViewerItem
+        return (isinstance(self.vtk, vtkViewer)
+                or self.vtk == self.VTKViewerItem)
 
     def isVTKLatticeItem(self):
-        return isinstance(self._vtk, vtkLattice) or self._vtk == self.VTKLatticeItem
-
-    def vtk(self):
-        return self._vtk
-
-    def parent(self):
-        return self._parent
-
-    def children(self):
-        return self._children
-
-    def append(self, child):
-        self._children.append(child)
-
-    def child(self, row):
-        return self._children[row]
-
-    def data(self, column):
-        return self._data[column]
-
-    def setData(self, data):
-        if data:
-            self._vtk.name = data
-            self._data = [data]
-
-    def dataCount(self):
-        return self._data.__len__()
-
-    def childCount(self):
-        return self._children.__len__()
-
-    def row(self):
-        return self.parent().children().index(self)
-
-    def name(self):
-        return self._data[0]
-
-    def insertChild(self, index, child):
-        if 0 <= index <= len(self._children):
-            child._parent = self
-            self._children.insert(index, child)
-
-    def removeChild(self, index):
-        if 0 <= index < len(self._children):
-            del self._children[index]
+        return (isinstance(self.vtk, vtkLattice)
+                or self.vtk == self.VTKLatticeItem)
