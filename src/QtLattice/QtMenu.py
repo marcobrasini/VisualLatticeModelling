@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMenu, QAction, QLabel, QWidgetAction
+from PyQt5.QtWidgets import QMenu, QLabel, QWidgetAction
 from .QtMenuViewer import QtMenuViewer
 from .QtMenuLattice import QtMenuLattice
 
@@ -6,7 +6,8 @@ from .QtMenuLattice import QtMenuLattice
 class QtMenu(QMenu):
 
     def __init__(self, parent=None):
-        super().__init__("File", parent=parent)
+        super().__init__(parent=parent)
+        #
         viewer = QWidgetAction(self)
         viewer.setDefaultWidget(QLabel('Viewer...'))
         viewer.setEnabled(False)
@@ -27,4 +28,3 @@ class QtMenu(QMenu):
         self.addAction(self.lattice.save)
         self.addAction(self.lattice.rename)
         self.addAction(self.lattice.remove)
-

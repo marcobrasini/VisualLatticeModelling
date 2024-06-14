@@ -17,6 +17,8 @@ class QtViewerTabDefault(QLabel):
 
 class QtViewerTab(MyTabWidget):
 
+    viewerSelected = pyqtSignal(int)
+    viewerRenamed = pyqtSignal(QObject, int, str)
     viewerRemoved = pyqtSignal(QObject, int)
     viewerInserted = pyqtSignal(QObject, int)
     latticeRemoved = pyqtSignal(QObject, int, int)
@@ -27,8 +29,10 @@ class QtViewerTab(MyTabWidget):
         self.setAcceptDrops(True)
         self.widgetOpenRequested.connect(self.openViewer)
         self.widgetCloseRequested.connect(self.closeViewer)
-        self.widgetRemoved.connect(self.emit_viewerRemoved)
         self.widgetInserted.connect(self.emit_viewerInserted)
+        self.widgetRemoved.connect(self.emit_viewerRemoved)
+        self.widgetRenamed.connect(self.emit_viewerRenamed)
+        self.currentChanged.connect(self.emit_viewerSelected)
 
     def setModel(self, model):
         self.clear()
@@ -63,6 +67,9 @@ class QtViewerTab(MyTabWidget):
         self.removeTab(index)
         self.widgetRemoved.connect(self.emit_viewerRemoved)
 
+    def renameViewer(self, i: int, name: str, callback: bool = True):
+        self.tabBar().labels[i].setText(name)
+
     def appendLattice(self, lattice: vtkLattice, i: int, callback: bool = True):
         self.widget(i).appendLattice(lattice)
         if callback:
@@ -74,10 +81,12 @@ class QtViewerTab(MyTabWidget):
             self.emit_latticeInserted(i, j)
 
     def removeLattice(self, i: int, j: int, callback: bool = True):
-        print(i, j)
         self.widget(i).removeLattice(j)
         if callback:
             self.emit_latticeInserted(i, j)
+
+    def selectViewer(self, i):
+        self.setCurrentIndex(i)
 
     def emit_viewerInserted(self, i: int):
         self.viewerInserted.emit(self, i)
@@ -87,6 +96,12 @@ class QtViewerTab(MyTabWidget):
 
     def emit_latticeInserted(self, i: int, j: int):
         self.latticeInserted.emit(self, i, j)
+
+    def emit_viewerRenamed(self, i: int, name: str):
+        self.viewerRenamed.emit(self, i, name)
+
+    def emit_viewerSelected(self, i: int):
+        self.viewerSelected.emit(i)
 
     def closeEvent(self, event):
         for i in range(self.count()):

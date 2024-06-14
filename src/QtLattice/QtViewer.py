@@ -26,14 +26,23 @@ class QtViewer(QWidget):
         self.tab.latticeInserted.connect(self.insertLattice)
         self.model.latticeRemoved.connect(self.removeLattice)
         self.tab.latticeRemoved.connect(self.removeLattice)
+        self.model.viewerRenamed.connect(self.renameViewer)
+        self.tab.viewerRenamed.connect(self.renameViewer)
+
+        self.tree.viewerSelected.connect(self.tab.selectViewer)
+        self.tab.viewerSelected.connect(self.tree.selectViewer)
+
+    def insertViewer(self, emitter: QObject, i: int):
+        receiver = self.tab if emitter == self.model else self.model
+        receiver.insertViewer(emitter.viewer(i), i, callback=False)
 
     def removeViewer(self, emitter: QObject, i: int):
         receiver = self.tab if emitter == self.model else self.model
         receiver.removeViewer(i, callback=False)
 
-    def insertViewer(self, emitter: QObject, i: int):
+    def renameViewer(self, emitter: QObject, i: int, name: str):
         receiver = self.tab if emitter == self.model else self.model
-        receiver.insertViewer(emitter.viewer(i), i, callback=False)
+        receiver.renameViewer(i, name, callback=False)
 
     def insertLattice(self, emitter: QObject, i: int, j: int):
         receiver = self.tab if emitter == self.model else self.model
@@ -45,8 +54,8 @@ class QtViewer(QWidget):
 
     def setupModel(self, model):
         self.model.setupModel(model)
-        self.tab.setModel(self.model)
         self.tree.setModel(self.model)
+        self.tab.setModel(self.model)
 
     def closeEvent(self, event):
         self.tree.closeEvent(event)

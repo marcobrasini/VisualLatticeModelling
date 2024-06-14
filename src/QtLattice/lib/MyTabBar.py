@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QTabBar, QLineEdit, QToolButton
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, QObject
 from PyQt5.QtGui import QMouseEvent
 
 
@@ -19,11 +19,14 @@ class MyTabBarAdder(QToolButton):
 
 class MyTabBarLabel(QLineEdit):
 
+    tabRenamed = pyqtSignal(QObject)
+
     def __init__(self, text: str = ""):
         super().__init__()
         self.setText(text)
         self.renamed()
         self.editingFinished.connect(self.renamed)
+        self.editingFinished.connect(lambda: self.tabRenamed.emit(self))
 
     def renamed(self):
         self.setFrame(False)
@@ -37,6 +40,7 @@ class MyTabBarLabel(QLineEdit):
 
 class MyTabBar(QTabBar):
 
+    tabRenamed = pyqtSignal(int, str)
     tabOpenRequested = pyqtSignal(int)
 
     def __init__(self, parent=None):
@@ -65,8 +69,10 @@ class MyTabBar(QTabBar):
         self.setTabEnabled(0, False)
 
     def insertTab(self, index, text):
-        self.labels.insert(index, MyTabBarLabel(text))
-        self.setTabButton(index, QTabBar.LeftSide, self.labels[index])
+        label = MyTabBarLabel(text)
+        label.tabRenamed.connect(self.emit_tabRenamed)
+        self.labels.insert(index, label)
+        self.setTabButton(index, QTabBar.LeftSide, label)
 
     def removeTab(self, index):
         del self.labels[index]
@@ -85,6 +91,9 @@ class MyTabBar(QTabBar):
 
     def emit_tabOpenRequested(self):
         self.tabOpenRequested.emit(self.count() - 1)
+
+    def emit_tabRenamed(self, label):
+        self.tabRenamed.emit(self.labels.index(label), label.text())
 
     def mousePressEvent(self, event: QMouseEvent):
         if self.isMovable():

@@ -1,6 +1,5 @@
-from PyQt5.QtWidgets import QMenu, QAction, QWidgetAction, QLabel, QLineEdit
+from PyQt5.QtWidgets import QMenu, QAction
 from PyQt5.QtCore import pyqtSignal
-from vtkLattice import vtkViewer
 from .lib.MyDialog import MyDialogSign, MyDialogFile
 
 
@@ -65,28 +64,23 @@ class QtMenuLattice(QMenu):
         if loadDialog.exec():
             files = loadDialog.selectedFiles()
             self.openLattice.emit(files)
-            print('openLattice emitted')
 
     def emit_loadLattice(self):
         loadDialog = DialogLatticeLoad(self)
         if loadDialog.exec():
             files = loadDialog.selectedFiles()
             self.loadLattice.emit(files)
-            print('loadLattice emitted')
 
     def emit_saveLattice(self):
         saveDialog = DialogLatticeSave(self)
         if saveDialog.exec():
             files = saveDialog.selectedFiles()
             self.saveLattice.emit(files)
-            print('saveLattice emitted')
 
     def emit_renameLattice(self):
         self.renameLattice.emit()
-        print('renameLattice emitted')
 
     def emit_removeLattice(self):
         closeDialog = DialogLatticeRemove(self)
         if closeDialog.exec():
             self.removeLattice.emit()
-            print('removeLattice emitted')

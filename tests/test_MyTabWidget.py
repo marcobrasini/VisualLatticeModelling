@@ -6,7 +6,7 @@ from . import openqt
 class TestMyTabWidget(TestCase):
 
     @openqt
-    def test_MyQtTabWidget(self):
+    def test_MyTabWidget(self):
 
         from PyQt5.QtWidgets import QWidget
 

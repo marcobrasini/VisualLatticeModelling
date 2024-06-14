@@ -7,8 +7,7 @@ from . import openqt
 
 class TestQtViewerModel(TestCase):
 
-    model = QtViewerModel()
-    model.setupModel(TestQtViewerModel.vtkviewers)
+    model = TestQtViewerModel.exampleModel(TestQtViewerModel)
 
     @openqt
     def test_QtViewerModel(self):

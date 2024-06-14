@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMenu, QAction, QWidgetAction, QLabel, QLineEdit
+from PyQt5.QtWidgets import QMenu, QAction, QLineEdit
 from PyQt5.QtCore import pyqtSignal
 from .lib.MyDialog import MyDialogSign, MyDialogForm, MyDialogFile
 
@@ -58,7 +58,6 @@ class QtMenuViewer(QMenu):
         if openDialog.exec():
             name = openDialog.fields()[0].text()
             self.openViewer.emit(name)
-            print('openViewer emitted', name)
 
     def emit_renameViewer(self):
         self.renameViewer.emit()
@@ -68,10 +67,8 @@ class QtMenuViewer(QMenu):
         if printDialog.exec():
             files = printDialog.selectedFiles()
             self.printViewer.emit(files)
-            print('printViewer emitted', files)
 
     def emit_closeViewer(self):
         closeDialog = DialogViewerClose(self)
-        if closeDialog.open():
+        if closeDialog.exec():
             self.closeViewer.emit()
-            print('closeViewer emitted')

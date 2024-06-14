@@ -5,6 +5,7 @@ from .MyTabBar import MyTabBar
 
 class MyTabWidget(QTabWidget):
 
+    widgetRenamed = pyqtSignal(int, str)
     widgetRemoved = pyqtSignal(int)
     widgetInserted = pyqtSignal(int)
     widgetOpenRequested = pyqtSignal(int)
@@ -16,6 +17,7 @@ class MyTabWidget(QTabWidget):
         self.defaultTab(addWidget())
         self.widgetCloseRequested = self.tabBar().tabCloseRequested
         self.widgetOpenRequested = self.tabBar().tabOpenRequested
+        self.widgetRenamed = self.tabBar().tabRenamed
 
     def defaultTab(self, widget):
         self.addTab(widget, None)
