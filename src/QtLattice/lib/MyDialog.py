@@ -1,10 +1,9 @@
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QGridLayout, QPushButton, QLabel, QSizePolicy
+from PyQt5.QtWidgets import QDialog, QFileDialog, QGridLayout, QPushButton, QLabel
 from PyQt5.QtCore import Qt
 from ..lib.MyFormWidget import MyFormWidget
 
 
 class MyDialog(QDialog):
-
     def __init__(self, widget, single=False, parent = None):
         super().__init__(parent=parent)
         self.widget = widget
@@ -67,7 +66,6 @@ class MyDialogSign(MyDialog):
 
 
 class MyDialogForm(MyDialog):
-
     def __init__(self, parent = None):
         super().__init__(MyFormWidget(), parent=parent)
         self.setDefaultButton(QDialog.Accepted)
@@ -83,3 +81,14 @@ class MyDialogForm(MyDialog):
 
     def fields(self):
         return [self.widget.field(i) for i in range(self.widget.count())]
+
+
+class MyDialogFile(QFileDialog):
+
+    LoadMode = QFileDialog.ExistingFiles
+    SaveMode = QFileDialog.AnyFile
+
+    def __init__(self, fileMode, parent=None):
+        super().__init__(parent=parent)
+        self.setViewMode(QFileDialog.Detail)
+        self.setFileMode(fileMode)
