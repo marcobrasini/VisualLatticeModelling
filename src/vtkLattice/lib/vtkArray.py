@@ -48,4 +48,4 @@ class vtkArray(vtkOutlet):
 
     def visible(self, visibility):
         for entity in self:
-            entity.setVisible(visibility)
+            entity.visible(visibility)

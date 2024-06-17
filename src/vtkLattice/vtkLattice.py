@@ -53,7 +53,7 @@ class vtkLattice:
         self.polys.rotate(rotation, axis)
 
     def visible(self, visibility):
-        self.cell.setVisible(visibility)
+        self.cell.visible(visibility)
         self.basis.visible(visibility)
         self.atoms.visible(visibility)
         self.bonds.visible(visibility)
