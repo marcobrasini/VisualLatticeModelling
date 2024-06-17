@@ -24,7 +24,7 @@ class vtkEntity(vtkOutlet):
     def rescale(self, factor):
         self.actor.SetScale(factor)
 
-    def setVisible(self, visibility):
+    def visible(self, visibility):
         if not visibility:
             self.visibility = self.actor.GetVisibility()
         self.actor.SetVisibility(self.visibility and visibility)

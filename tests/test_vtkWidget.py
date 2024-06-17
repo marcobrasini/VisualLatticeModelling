@@ -8,6 +8,6 @@ from . import Example, openqt
 def test_viewer():
     vtkviewer = vtkViewer()
     vtkwidget = vtkWidget(vtkviewer)
-    vtkwidget.load_lattice(vtkLattice(Example.lattice))
+    vtkwidget.appendLattice(vtkLattice(Example.lattice))
     assert vtkwidget.parent() is None
     return vtkwidget
