@@ -1,4 +1,3 @@
-import typing
 from PyQt5.QtCore import QModelIndex, QObject, pyqtSignal
 from PyQt5.QtGui import QStandardItemModel
 from vtkLattice import vtkLattice, vtkViewer
@@ -7,15 +6,21 @@ from .QtViewerItem import QtViewerItem
 
 class QtViewerModel(QStandardItemModel):
 
+    viewerSelected = pyqtSignal(QObject, int)
+    viewerInserted = pyqtSignal(QObject, int)
+    viewerExported = pyqtSignal(QObject, int)
     viewerRenamed = pyqtSignal(QObject, int, str)
     viewerRemoved = pyqtSignal(QObject, int)
-    viewerInserted = pyqtSignal(QObject, int)
-    latticeRemoved = pyqtSignal(QObject, int, int)
+    latticeSelected = pyqtSignal(QObject, int, int)
     latticeInserted = pyqtSignal(QObject, int, int)
+    latticeExported = pyqtSignal(QObject, int, int)
+    latticeRenamed = pyqtSignal(QObject, int, int, str)
+    latticeRemoved = pyqtSignal(QObject, int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.root = self.invisibleRootItem
+        self.current = QModelIndex()
         self.setHorizontalHeaderLabels(['QtViewer'])
         self.itemChanged.connect(self.nameChanged)
         self.itemChanged.connect(self.visibilityChanged)
@@ -99,6 +104,6 @@ class QtViewerModel(QStandardItemModel):
 
     def visibilityChanged(self, item: QtViewerItem):
         if item.isVTKLatticeItem() and item.checkState() != item.visible:
-            index = item.index()
+            i, j = item.index().parent().row(), item.index().row()
             item.visible = item.checkState()
-            self.lattice(index.parent().row(), index.row()).visible(bool(item.visible))
+            self.lattice(i, j).visible(bool(item.visible))

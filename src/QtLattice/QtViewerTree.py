@@ -1,20 +1,22 @@
-from PyQt5.QtWidgets import QTreeView, QMenu, QAction, QAbstractItemView
-from PyQt5.QtCore import Qt, QPoint, QObject, pyqtSignal, QModelIndex
+from PyQt5.QtWidgets import QTreeView, QAbstractItemView
+from PyQt5.QtCore import Qt, QPoint, pyqtSignal, QModelIndex
 from PyQt5.QtGui import QMouseEvent
-from vtkLattice import vtkLattice, vtkViewer
-from .QtMenu import QtMenu
+from .QtMenuItem import QtMenuItem
+
 
 class QtViewerTree(QTreeView):
 
+    rootSelected = pyqtSignal()
+    latticeSelected = pyqtSignal(int, int)
     viewerSelected = pyqtSignal(int)
     viewerRenamed = pyqtSignal(str)
     viewerPrinted = pyqtSignal(int)
-    # removeLattice = pyqtSignal(QObject, int, int)
 
     def __init__(self, parent = None):
         super().__init__(parent=parent)
-        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.setSelectionMode(QAbstractItemView.SingleSelection)
         self.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
         self.customContextMenuRequested.connect(self.contextMenu)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):
@@ -22,16 +24,18 @@ class QtViewerTree(QTreeView):
         if index.isValid():
             if self.model().itemFromIndex(index).isVTKViewerItem():
                 self.viewerSelected.emit(index.row())
-            else:
-                self.viewerSelected.emit(index.parent().row())
+            if self.model().itemFromIndex(index).isVTKLatticeItem():
+                self.latticeSelected.emit(index.parent().row(), index.row())
         else:
             self.clearSelection()
+            self.rootSelected.emit()
 
-    def selectViewer(self, i: int):
-        self.setCurrentIndex(self.model().createIndex(i, 0))
+    def selectViewer(self, i: int, callback: bool = True):
+        if self.selectedViewer().row() != i:
+            self.setCurrentIndex(self.model().createIndex(i, 0))
 
     def contextMenu(self, point: QPoint):
-        menu = QtMenu(self)
+        menu = QtMenuItem(self)
         menu.viewer.openViewer.connect(self.openViewer)
         menu.viewer.closeViewer.connect(self.closeViewer)
         menu.viewer.printViewer.connect(self.printViewer)
@@ -41,14 +45,7 @@ class QtViewerTree(QTreeView):
         menu.lattice.saveLattice.connect(self.saveLattice)
         menu.lattice.renameLattice.connect(self.renameLattice)
         menu.lattice.removeLattice.connect(self.removeLattice)
-        if not self.selected().isValid():
-            menu.viewer.close.setEnabled(False)
-            menu.viewer.print.setEnabled(False)
-            menu.viewer.rename.setEnabled(False)
-            menu.lattice.load.setEnabled(False)
-            menu.lattice.save.setEnabled(False)
-            menu.lattice.rename.setEnabled(False)
-            menu.lattice.remove.setEnabled(False)
+        menu.selectItem(self.viewer(), self.lattice())
         menu.exec(self.viewport().mapToGlobal(point))
 
     def selected(self):
@@ -66,13 +63,28 @@ class QtViewerTree(QTreeView):
                 return index.parent()
         return QModelIndex()
 
-
     def selectedLattice(self):
         index = self.selected()
         if index.isValid():
             if self.model().itemFromIndex(index).isVTKLatticeItem():
                 return index
         return QModelIndex()
+
+    def viewer(self):
+        index = self.selectedViewer()
+        if index.isValid():
+            return self.model().viewer(index.row())
+
+    def lattice(self):
+        index = self.selectedLattice()
+        if index.isValid():
+            return self.model().lattice(index.parent().row(), index.row())
+
+    def isViewer(self):
+        return self.selectedViewer().isValid()
+
+    def isLattice(self):
+        return self.selectedLattice().isValid()
 
     def openViewer(self, name: str):
         self.model().appendViewer(name)

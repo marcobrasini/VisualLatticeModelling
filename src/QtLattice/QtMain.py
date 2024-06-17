@@ -1,8 +1,6 @@
 import sys
-from vtkLattice import vtkLattice
-from PyQt5.Qt import QApplication, Qt
-from PyQt5.QtWidgets import QMainWindow, QSplitter, QVBoxLayout
-# from .QtMenu import QtMenu
+from PyQt5.Qt import QApplication
+from PyQt5.QtWidgets import QMainWindow
 from .QtViewer import QtViewer
 
 

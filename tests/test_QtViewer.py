@@ -12,7 +12,7 @@ class TestQtViewer(TestCase):
     @openqt
     def test_QtViewer(self):
         qtviewer = QtViewer()
-        qtviewer.setupModel(self.vtkviewers)
-        qtviewer.model.insertViewer(vtkViewer('vtklatticeC'), 2)
-        qtviewer.model.insertLattice(vtkLattice.load_poscar(Example.POSCAR), 2, 0)
+        qtviewer.setupModel([])
+        qtviewer.model.insertViewer(vtkViewer('vtklatticeC'), 0)
+        qtviewer.model.insertLattice(vtkLattice.load_poscar(Example.POSCAR), 0, 0)
         return qtviewer

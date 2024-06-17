@@ -27,12 +27,12 @@ class QtViewerTab(MyTabWidget):
     def __init__(self, parent=None):
         super().__init__(parent, QtViewerTabDefault)
         self.setAcceptDrops(True)
+        self.currentChanged.connect(self.selectViewer)
         self.widgetOpenRequested.connect(self.openViewer)
         self.widgetCloseRequested.connect(self.closeViewer)
         self.widgetInserted.connect(self.emit_viewerInserted)
         self.widgetRemoved.connect(self.emit_viewerRemoved)
         self.widgetRenamed.connect(self.emit_viewerRenamed)
-        self.currentChanged.connect(self.emit_viewerSelected)
 
     def setModel(self, model):
         self.clear()
@@ -85,7 +85,12 @@ class QtViewerTab(MyTabWidget):
         if callback:
             self.emit_latticeInserted(i, j)
 
-    def selectViewer(self, i):
+    def selectViewer(self, i: int, callback: bool = True):
+        self.setCurrentIndex(i)
+        if callback:
+            self.emit_viewerSelected(i)
+
+    def selectLattice(self, i: int, j: int):
         self.setCurrentIndex(i)
 
     def emit_viewerInserted(self, i: int):

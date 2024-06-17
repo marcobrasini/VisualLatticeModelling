@@ -1,7 +1,7 @@
 from unittest import TestCase
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
-from src.QtLattice.QtMenu import QtMenu
+from src.QtLattice.QtMenuItem import QtMenuItem
 from . import openqt
 
 
@@ -18,5 +18,4 @@ class TestQtMenu(TestCase):
 
     @openqt
     def test_QtMain(self):
-        return TestQtMenu.Widget(QtMenu)
-
+        return TestQtMenu.Widget(QtMenuItem)

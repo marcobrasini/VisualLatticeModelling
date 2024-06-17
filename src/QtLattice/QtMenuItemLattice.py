@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMenu, QAction
+from PyQt5.QtWidgets import QMenu, QAction, QWidgetAction, QLabel
 from PyQt5.QtCore import pyqtSignal
 from .lib.MyDialog import MyDialogSign, MyDialogFile
 
@@ -28,7 +28,7 @@ class DialogLatticeRemove(MyDialogSign):
         self.setText('Do you want to remove the lattice?')
 
 
-class QtMenuLattice(QMenu):
+class QtMenuItemLattice(QMenu):
 
     openLattice = pyqtSignal(list)
     loadLattice = pyqtSignal(list)
@@ -38,6 +38,9 @@ class QtMenuLattice(QMenu):
 
     def __init__(self, parent):
         super().__init__("Lattice...", parent=parent)
+        self.header = QWidgetAction(self)
+        self.header.setDefaultWidget(QLabel('Lattice...'))
+        self.header.setEnabled(False)
         #
         self.open = QAction('Open')
         self.open.triggered.connect(self.emit_openLattice)
@@ -59,20 +62,27 @@ class QtMenuLattice(QMenu):
         self.remove.triggered.connect(self.emit_removeLattice)
         self.addAction(self.remove)
 
+    def validLattice(self, viewer, lattice):
+        self.open.setEnabled(True)
+        self.load.setEnabled(not viewer is None)
+        self.save.setEnabled(not lattice is None)
+        self.rename.setEnabled(not lattice is None)
+        self.remove.setEnabled(not lattice is None)
+
     def emit_openLattice(self):
-        loadDialog = DialogLatticeLoad(self)
+        loadDialog = DialogLatticeLoad()
         if loadDialog.exec():
             files = loadDialog.selectedFiles()
             self.openLattice.emit(files)
 
     def emit_loadLattice(self):
-        loadDialog = DialogLatticeLoad(self)
+        loadDialog = DialogLatticeLoad()
         if loadDialog.exec():
             files = loadDialog.selectedFiles()
             self.loadLattice.emit(files)
 
     def emit_saveLattice(self):
-        saveDialog = DialogLatticeSave(self)
+        saveDialog = DialogLatticeSave()
         if saveDialog.exec():
             files = saveDialog.selectedFiles()
             self.saveLattice.emit(files)
@@ -81,6 +91,6 @@ class QtMenuLattice(QMenu):
         self.renameLattice.emit()
 
     def emit_removeLattice(self):
-        closeDialog = DialogLatticeRemove(self)
+        closeDialog = DialogLatticeRemove()
         if closeDialog.exec():
             self.removeLattice.emit()
