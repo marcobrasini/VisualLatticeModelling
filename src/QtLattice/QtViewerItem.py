@@ -24,20 +24,19 @@ class QtViewerItem(QStandardItem):
             self.vtk.name = value
         return super().setData(value, role)
 
-    def setVTKLatticeItem(self, lattice = None):
-        if lattice is None:
-            self.vtk = QtViewerItem.VTKLatticeItem
-            return self
+    def setVTKLatticeItem(self, lattice = vtkLattice | str):
+        if isinstance(lattice, str):
+            lattice = vtkLattice.load_poscar(lattice)
         self.vtk = lattice
         self.setData(lattice.name)
         self.setCheckable(True)
         self.setCheckState(Qt.Checked)
+        self.visible = self.checkState()
         return self
 
-    def setVTKViewerItem(self, viewer = None):
-        if viewer is None:
-            self.vtk = QtViewerItem.VTKLatticeItem
-            return self
+    def setVTKViewerItem(self, viewer = vtkViewer | str):
+        if isinstance(viewer, str):
+            viewer = vtkViewer(viewer)
         self.vtk = viewer
         self.setData(viewer.name)
         for lattice in viewer:
