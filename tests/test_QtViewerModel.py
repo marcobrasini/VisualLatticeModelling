@@ -20,7 +20,7 @@ class TestQtViewerModel(TestCase):
 
     def exampleModel(cls):
         model = QtViewerModel()
-        model.setupModel(cls.exampleViewers(cls))
+        model.setup(cls.exampleViewers(cls))
         return model
 
     @openqt
@@ -29,11 +29,11 @@ class TestQtViewerModel(TestCase):
         from PyQt5.QtWidgets import QTreeView
 
         model = QtViewerModel()
-        model.setupModel(self.exampleViewers())
-        model.insertViewer(vtkViewer('vtkViewer_new'), 0)
-        model.insertLattice(vtkLattice(Lattice('vtkLattice_new')), 0, 0)
-        model.removeLattice(2, 1)
-        model.printModel()
+        model.setup(self.exampleViewers())
+        # model.insertViewer(0, vtkViewer('vtkViewer_new'))
+        # model.insertLattice(vtkLattice(Lattice('vtkLattice_new')), 0, 0)
+        # model.removeLattice(2, 1)
+        print(model)
 
         view = QTreeView()
         view.setModel(model)

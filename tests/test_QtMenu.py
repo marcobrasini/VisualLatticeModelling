@@ -2,6 +2,7 @@ from unittest import TestCase
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import Qt
 from src.QtLattice.QtMenuItem import QtMenuItem
+from .test_QtViewerModel import TestQtViewerModel
 from . import openqt
 
 
@@ -10,6 +11,7 @@ class TestQtMenu(TestCase):
         def __init__(self, menu, parent=None):
             super().__init__(parent=parent)
             self.menu = menu
+            self.model = TestQtViewerModel.exampleModel(TestQtViewerModel)
             self.setContextMenuPolicy(Qt.CustomContextMenu)
             self.customContextMenuRequested.connect(self.contextMenu)
 

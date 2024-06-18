@@ -10,6 +10,6 @@ class TestQtMenu(TestCase):
 
     @openqt
     def test_QtViewerTab(self):
-        tab = QtViewerTab()
-        tab.setModel(self.model)
+        tab = QtViewerTab(self.model)
+        tab.setup()
         return tab

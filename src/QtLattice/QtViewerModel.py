@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QModelIndex, QObject, pyqtSignal
+from PyQt5.QtCore import QModelIndex, pyqtSignal
 from PyQt5.QtGui import QStandardItemModel
 from vtkLattice import vtkLattice, vtkViewer
 from .QtViewerItem import QtViewerItem
@@ -6,32 +6,36 @@ from .QtViewerItem import QtViewerItem
 
 class QtViewerModel(QStandardItemModel):
 
-    viewerSelected = pyqtSignal(QObject, int)
-    viewerInserted = pyqtSignal(QObject, int)
-    viewerExported = pyqtSignal(QObject, int)
-    viewerRenamed = pyqtSignal(QObject, int, str)
-    viewerRemoved = pyqtSignal(QObject, int)
-    latticeSelected = pyqtSignal(QObject, int, int)
-    latticeInserted = pyqtSignal(QObject, int, int)
-    latticeExported = pyqtSignal(QObject, int, int)
-    latticeRenamed = pyqtSignal(QObject, int, int, str)
-    latticeRemoved = pyqtSignal(QObject, int, int)
+    rootSelected = pyqtSignal()
+    viewerSelected = pyqtSignal(int)
+    viewerInserted = pyqtSignal(int)
+    viewerExported = pyqtSignal(int)
+    viewerRenamed = pyqtSignal(int)
+    viewerRemoved = pyqtSignal(int)
+    viewerUpdated = pyqtSignal(int)
+    latticeSelected = pyqtSignal(int, int)
+    latticeInserted = pyqtSignal(int, int)
+    latticeExported = pyqtSignal(int, int)
+    latticeRenamed = pyqtSignal(int, int)
+    latticeRemoved = pyqtSignal(int, int)
+    latticeUpdated = pyqtSignal(int, int)
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.root = self.invisibleRootItem
         self.current = QModelIndex()
-        self.setHorizontalHeaderLabels(['QtViewer'])
+        self.root = self.invisibleRootItem
         self.itemChanged.connect(self.nameChanged)
-        self.itemChanged.connect(self.visibilityChanged)
+        self.itemChanged.connect(self.stateChanged)
 
     # Custom methods
-    def setupModel(self, viewerList):
-        for viewer in viewerList:
+    def setup(self, model):
+        self.clear()
+        self.setHorizontalHeaderLabels(['QtViewer'])
+        for viewer in model:
             viewerItem = QtViewerItem().setVTKViewerItem(viewer)
-            self.root().appendRow(viewerItem)
+            self.appendRow(viewerItem)
 
-    def printModel(self, *args):
+    def __str__(self, *args):
         report = "QtViewer:\n"
         for i in range(self.viewerCount()):
             viewer = self.viewerItem(i)
@@ -39,7 +43,24 @@ class QtViewerModel(QStandardItemModel):
             for j in range(self.latticeCount(i)):
                 lattice = self.latticeItem(i, j)
                 report += f"\t\t[{j}]:\t{lattice.name()}\n"
-        print(report)
+        return report
+
+    def currentIndex(self):
+        if self.current.isValid():
+            if self.current.parent().isValid():
+                return (self.current.parent().row(), self.current.row(),)
+            return (self.current.row(),)
+        return ()
+
+    def currentViewer(self):
+        index = self.currentIndex()
+        if len(index) > 0:
+            return self.viewer(index[0])
+
+    def currentLattice(self):
+        index = self.currentIndex()
+        if len(index) > 1:
+            return self.lattice(index[0], index[1])
 
     def viewerCount(self) -> int:
         return self.rowCount()
@@ -59,51 +80,78 @@ class QtViewerModel(QStandardItemModel):
     def lattice(self, i: int, j: int) -> vtkLattice:
         return self.latticeItem(i, j).vtk
 
-    def appendViewer(self, name: str, callback: bool = True):
-        viewer = QtViewerItem().setVTKViewerItem(name)
-        self.appendRow(viewer)
-        if callback:
-            self.viewerInserted.emit(self, self.viewerCount() - 1)
+    ###########################################################################
+    def selectRoot(self):
+        self.current = QModelIndex()
+        self.rootSelected.emit()
 
-    def insertViewer(self, vtkviewer: vtkViewer, i: int, callback: bool = True):
+    # viewer modifiers
+    def selectViewer(self, i: int):
+        self.current = self.viewerItem(i).index()
+        self.viewerSelected.emit(i)
+
+    def appendViewer(self, viewer: vtkViewer | str):
+        viewer = QtViewerItem().setVTKViewerItem(viewer)
+        self.appendRow(viewer)
+        self.viewerInserted.emit(self.viewerCount() - 1)
+
+    def insertViewer(self, i: int, vtkviewer: vtkViewer | str):
         viewer = QtViewerItem().setVTKViewerItem(vtkviewer)
         self.insertRow(i, viewer)
-        if callback:
-            self.viewerInserted.emit(self, i)
+        self.viewerInserted.emit(i)
 
-    def removeViewer(self, i: int, callback: bool = True):
+    def exportViewer(self, i: int, file: str):
+        self.viewerExported.emit(i)
+
+    def renameViewer(self, i: int,  name: str):
+        if name:
+            self.viewerItem(i).setName(name)
+
+    def removeViewer(self, i: int):
         self.removeRow(i)
-        if callback:
-            self.viewerRemoved.emit(self, i)
+        self.viewerRemoved.emit(i)
+        self.selectRoot()
 
-    def renameViewer(self, i: int,  name: str, callback: bool = True):
-        self.viewerItem(i).setName(name)
-        if callback:
-            self.viewerRenamed.emit(self, i, name)
+    ###########################################################################
+    # Lattice modifiers
+    def selectLattice(self, i: int, j: int):
+        self.current = self.latticeItem(i, j).index()
+        self.latticeSelected.emit(i, j)
 
-    def appendLattice(self, name: str, i: int, callback: bool = True):
-        lattice = QtViewerItem().setVTKLatticeItem(name)
+    def appendLattice(self, i: int, lattice: vtkLattice | str):
+        lattice = QtViewerItem().setVTKLatticeItem(lattice)
         self.viewerItem(i).appendRow(lattice)
-        if callback:
-            self.latticeInserted.emit(self, i, self.latticeCount(i) - 1)
+        self.latticeInserted.emit(i, self.latticeCount(i) - 1)
 
-    def insertLattice(self, vtklattice: vtkLattice, i: int, j: int, callback: bool = True):
-        lattice = QtViewerItem().setVTKLatticeItem(vtklattice)
+    def insertLattice(self, i: int, j: int, lattice: vtkLattice | str):
+        lattice = QtViewerItem().setVTKLatticeItem(lattice)
         self.viewerItem(i).insertRow(j, lattice)
-        if callback:
-            self.latticeInserted.emit(self, i, j)
+        self.latticeInserted.emit(i, j)
 
-    def removeLattice(self, i: int, j: int, callback: bool = True):
+    def exportLattice(self, i: int, j: int, file: str):
+        self.latticeExported.emit(i, j)
+
+    def renameLattice(self, i: int, j: int, name: str):
+        if name:
+            self.latticeItem(i, j).setName(name)
+
+    def removeLattice(self, i: int, j: int):
         self.viewerItem(i).removeRow(j)
-        if callback:
-            self.latticeRemoved.emit(self, i, j)
+        self.latticeRemoved.emit(i, j)
+        self.selectViewer(i)
 
+    ###########################################################################
     def nameChanged(self, item: QtViewerItem):
-        if item.isVTKViewerItem():
-            self.renameViewer(item.index().row(), item.name())
+        if item.checkState() == item.visible:
+            index = item.index()
+            if item.isVTKViewerItem():
+                self.viewerRenamed.emit(index.row())
+            if item.isVTKLatticeItem():
+                self.latticeRenamed.emit(index.parent().row(), index.row())
 
-    def visibilityChanged(self, item: QtViewerItem):
+    def stateChanged(self, item: QtViewerItem):
         if item.isVTKLatticeItem() and item.checkState() != item.visible:
-            i, j = item.index().parent().row(), item.index().row()
+            index = item.index()
+            self.lattice(index.parent().row(), index.row()).visible(bool(item.visible))
+            self.latticeUpdated.emit(index.parent().row(), index.row())
             item.visible = item.checkState()
-            self.lattice(i, j).visible(bool(item.visible))

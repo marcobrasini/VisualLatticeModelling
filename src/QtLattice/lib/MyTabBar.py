@@ -40,7 +40,7 @@ class MyTabBarLabel(QLineEdit):
 
 class MyTabBar(QTabBar):
 
-    tabRenamed = pyqtSignal(int, str)
+    tabRenameRequested = pyqtSignal(int, str)
     tabOpenRequested = pyqtSignal(int)
 
     def __init__(self, parent=None):
@@ -70,7 +70,7 @@ class MyTabBar(QTabBar):
 
     def insertTab(self, index, text):
         label = MyTabBarLabel(text)
-        label.tabRenamed.connect(self.emit_tabRenamed)
+        label.tabRenamed.connect(self.emit_tabRenamedRequested)
         self.labels.insert(index, label)
         self.setTabButton(index, QTabBar.LeftSide, label)
 
@@ -92,8 +92,8 @@ class MyTabBar(QTabBar):
     def emit_tabOpenRequested(self):
         self.tabOpenRequested.emit(self.count() - 1)
 
-    def emit_tabRenamed(self, label):
-        self.tabRenamed.emit(self.labels.index(label), label.text())
+    def emit_tabRenamedRequested(self, label):
+        self.tabRenameRequested.emit(self.labels.index(label), label.text())
 
     def mousePressEvent(self, event: QMouseEvent):
         if self.isMovable():

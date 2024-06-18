@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QMenu, QAction, QWidgetAction
 from PyQt5.QtCore import pyqtSignal
 from .lib.MyDialog import MyDialogSign
-from .QtMenuItem import QtMenuItem
 
 
 class DialogExit(MyDialogSign):
@@ -11,22 +10,27 @@ class DialogExit(MyDialogSign):
         self.setText('Do you want to exit?')
 
 
-class QtMenuFile(QtMenuItem):
+class QtMenuFile(QMenu):
 
     exitSignal = pyqtSignal()
 
     def __init__(self, parent=None):
-        super().__init__(parent=parent)
+        super().__init__('File', parent=parent)
+        for action in self.item().actions():
+            self.addAction(action)
+        self.aboutToShow.connect(self.item().selectValid)
         #
         self.addSeparator()
         self.exit = QAction('Exit')
         self.exit.triggered.connect(self.emit_exitSignal)
         self.addAction(self.exit)
-        self.setTitle('File')
+        #
 
-    def selectValid(self, viewer, lattice):
-        self.viewer.validViewer(viewer)
-        self.lattice.validLattice(viewer, lattice)
+    def model(self):
+        return self.parent().model
+
+    def item(self):
+        return self.parent().item
 
     def emit_exitSignal(self):
         exitDialog = DialogExit()

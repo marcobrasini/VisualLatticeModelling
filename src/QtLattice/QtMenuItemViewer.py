@@ -29,23 +29,18 @@ class DialogViewerPrint(MyDialogFile):
 class QtMenuItemViewer(QMenu):
 
     openViewer = pyqtSignal(str)
-    renameViewer = pyqtSignal()
     printViewer = pyqtSignal(list)
     closeViewer = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-        self.header = QWidgetAction(self)
-        self.header.setDefaultWidget(QLabel('Viewer...'))
+        self.addSeparator()
+        self.header = QAction('Viewer...')
         self.header.setEnabled(False)
         #
         self.open = QAction("Open")
         self.open.triggered.connect(self.emit_openViewer)
         self.addAction(self.open)
-        #
-        self.rename = QAction("Rename")
-        self.rename.triggered.connect(self.emit_renameViewer)
-        self.addAction(self.rename)
         #
         self.print = QAction("Print")
         self.print.triggered.connect(self.emit_printViewer)
@@ -57,18 +52,17 @@ class QtMenuItemViewer(QMenu):
 
     def validViewer(self, viewer):
         self.open.setEnabled(True)
-        self.rename.setEnabled(not viewer is None)
-        self.print.setEnabled(not viewer is None)
-        self.close.setEnabled(not viewer is None)
+        self.print.setDisabled(viewer is None)
+        self.close.setDisabled(viewer is None)
+        self.header.setText(f"Viewer {
+            '' if viewer is None else viewer.name[:10]
+        }...")
 
     def emit_openViewer(self):
         openDialog = DialogViewerOpen()
         if openDialog.exec():
             name = openDialog.fields()[0].text()
             self.openViewer.emit(name)
-
-    def emit_renameViewer(self):
-        self.renameViewer.emit()
 
     def emit_printViewer(self):
         printDialog = DialogViewerPrint()

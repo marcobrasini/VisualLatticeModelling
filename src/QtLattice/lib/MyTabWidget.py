@@ -5,19 +5,19 @@ from .MyTabBar import MyTabBar
 
 class MyTabWidget(QTabWidget):
 
-    widgetRenamed = pyqtSignal(int, str)
     widgetRemoved = pyqtSignal(int)
     widgetInserted = pyqtSignal(int)
     widgetOpenRequested = pyqtSignal(int)
+    widgetRenameRequested = pyqtSignal(int, str)
     widgetCloseRequested = pyqtSignal(int)
 
     def __init__(self, parent=None, addWidget=QWidget):
         super().__init__(parent=parent)
         self.setTabBar(MyTabBar(self))
         self.defaultTab(addWidget())
-        self.widgetCloseRequested = self.tabBar().tabCloseRequested
         self.widgetOpenRequested = self.tabBar().tabOpenRequested
-        self.widgetRenamed = self.tabBar().tabRenamed
+        self.widgetRenameRequested = self.tabBar().tabRenameRequested
+        self.widgetCloseRequested = self.tabBar().tabCloseRequested
 
     def defaultTab(self, widget):
         self.addTab(widget, None)
@@ -28,6 +28,9 @@ class MyTabWidget(QTabWidget):
         self.tabBar().insertTab(index, name)
         self.setCurrentIndex(index)
         self.widgetInserted.emit(index)
+
+    def renameTab(self, index: int, name: str):
+        self.tabBar().labels[index].setText(name)
 
     def removeTab(self, index: int):
         if index != self.count() - 1:

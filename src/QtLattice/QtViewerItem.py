@@ -9,7 +9,7 @@ class QtViewerItem(QStandardItem):
     VTKViewerItem = 1
     VTKLatticeItem = 2
 
-    def __init__(self, parent = None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.name = self.data
         self.setName = self.setData
@@ -28,7 +28,7 @@ class QtViewerItem(QStandardItem):
         if isinstance(lattice, str):
             lattice = vtkLattice.load_poscar(lattice)
         self.vtk = lattice
-        self.setData(lattice.name)
+        self.setName(lattice.name)
         self.setCheckable(True)
         self.setCheckState(Qt.Checked)
         self.visible = self.checkState()
@@ -38,7 +38,9 @@ class QtViewerItem(QStandardItem):
         if isinstance(viewer, str):
             viewer = vtkViewer(viewer)
         self.vtk = viewer
-        self.setData(viewer.name)
+        self.setName(viewer.name)
+        self.setCheckable(False)
+        self.visible = self.checkState()
         for lattice in viewer:
             latticeItem = QtViewerItem(self)
             latticeItem.setVTKLatticeItem(lattice)

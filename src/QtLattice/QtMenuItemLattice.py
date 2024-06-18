@@ -21,11 +21,11 @@ class DialogLatticeSave(MyDialogFile):
             "POSCAR file (*.vasp)",
         ])
 
-class DialogLatticeRemove(MyDialogSign):
+class DialogLatticeclose(MyDialogSign):
     def __init__(self, parent = None):
         super().__init__(parent=parent)
-        self.setWindowTitle('Remove lattice')
-        self.setText('Do you want to remove the lattice?')
+        self.setWindowTitle('close lattice')
+        self.setText('Do you want to close the lattice?')
 
 
 class QtMenuItemLattice(QMenu):
@@ -33,13 +33,12 @@ class QtMenuItemLattice(QMenu):
     openLattice = pyqtSignal(list)
     loadLattice = pyqtSignal(list)
     saveLattice = pyqtSignal(list)
-    renameLattice = pyqtSignal()
-    removeLattice = pyqtSignal()
+    closeLattice = pyqtSignal()
 
     def __init__(self, parent):
         super().__init__("Lattice...", parent=parent)
-        self.header = QWidgetAction(self)
-        self.header.setDefaultWidget(QLabel('Lattice...'))
+        self.addSeparator()
+        self.header = QAction('Lattice...')
         self.header.setEnabled(False)
         #
         self.open = QAction('Open')
@@ -54,20 +53,18 @@ class QtMenuItemLattice(QMenu):
         self.save.triggered.connect(self.emit_saveLattice)
         self.addAction(self.save)
         #
-        self.rename = QAction('Rename')
-        self.rename.triggered.connect(self.emit_renameLattice)
-        self.addAction(self.rename)
-        #
-        self.remove = QAction('Remove')
-        self.remove.triggered.connect(self.emit_removeLattice)
-        self.addAction(self.remove)
+        self.close = QAction('Close')
+        self.close.triggered.connect(self.emit_closeLattice)
+        self.addAction(self.close)
 
     def validLattice(self, viewer, lattice):
         self.open.setEnabled(True)
-        self.load.setEnabled(not viewer is None)
-        self.save.setEnabled(not lattice is None)
-        self.rename.setEnabled(not lattice is None)
-        self.remove.setEnabled(not lattice is None)
+        self.load.setDisabled(viewer is None)
+        self.save.setDisabled(lattice is None)
+        self.close.setDisabled(lattice is None)
+        self.header.setText(f"Lattice {
+            '' if lattice is None else lattice.name[:10]
+        }...")
 
     def emit_openLattice(self):
         loadDialog = DialogLatticeLoad()
@@ -87,10 +84,7 @@ class QtMenuItemLattice(QMenu):
             files = saveDialog.selectedFiles()
             self.saveLattice.emit(files)
 
-    def emit_renameLattice(self):
-        self.renameLattice.emit()
-
-    def emit_removeLattice(self):
-        closeDialog = DialogLatticeRemove()
+    def emit_closeLattice(self):
+        closeDialog = DialogLatticeclose()
         if closeDialog.exec():
-            self.removeLattice.emit()
+            self.closeLattice.emit()
