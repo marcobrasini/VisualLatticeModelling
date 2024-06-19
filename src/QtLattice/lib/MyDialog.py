@@ -76,6 +76,7 @@ class MyDialogForm(MyDialog):
         self.widget.clean()
         for item in form.items():
             self.widget.append(item)
+
     def labels(self):
         return [self.widget.label(i) for i in self.widget.count()]
 

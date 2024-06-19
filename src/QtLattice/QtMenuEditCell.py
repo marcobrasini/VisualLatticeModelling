@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QMenu, QAction
 from .lib.MyDialog import MyDialogForm
 from .lib.MyArrayEdit import MyArrayEdit
-from .QtViewerModel import QtViewerModel
 
 
 class DialogLatticeSupercell(MyDialogForm):
