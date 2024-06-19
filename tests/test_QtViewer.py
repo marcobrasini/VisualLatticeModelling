@@ -1,7 +1,7 @@
 from unittest import TestCase
 from src.QtLattice.QtViewer import QtViewer
 from .test_QtViewerModel import TestQtViewerModel
-from . import openqt, Example
+from . import openqt
 
 
 class TestQtViewer(TestCase):

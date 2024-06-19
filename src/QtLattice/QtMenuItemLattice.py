@@ -21,7 +21,7 @@ class DialogLatticeSave(MyDialogFile):
             "POSCAR file (*.vasp)",
         ])
 
-class DialogLatticeclose(MyDialogSign):
+class DialogLatticeClose(MyDialogSign):
     def __init__(self, parent = None):
         super().__init__(parent=parent)
         self.setWindowTitle('close lattice')
@@ -85,6 +85,6 @@ class QtMenuItemLattice(QMenu):
             self.saveLattice.emit(files)
 
     def emit_closeLattice(self):
-        closeDialog = DialogLatticeclose()
+        closeDialog = DialogLatticeClose()
         if closeDialog.exec():
             self.closeLattice.emit()

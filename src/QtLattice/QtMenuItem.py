@@ -11,14 +11,13 @@ class QtMenuItem(QMenu):
         #
         self.addSeparator()
         self.viewer = QtMenuItemViewer(self)
-        self.addSeparator()
         self.addAction(self.viewer.header)
         self.addAction(self.viewer.open)
         self.addAction(self.viewer.print)
         self.addAction(self.viewer.close)
         #
-        self.lattice = QtMenuItemLattice(self)
         self.addSeparator()
+        self.lattice = QtMenuItemLattice(self)
         self.addAction(self.lattice.header)
         self.addAction(self.lattice.open)
         self.addAction(self.lattice.load)
@@ -63,6 +62,7 @@ class QtMenuItem(QMenu):
         if len(index) > 0:
             for file in files:
                 self.model().appendLattice(index[0], file)
+
     def request_saveLattice(self, files):
         index = self.model().currentIndex()
         if len(index) > 1:
