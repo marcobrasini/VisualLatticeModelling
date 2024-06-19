@@ -1,3 +1,4 @@
+import logging
 from PyQt5.QtWidgets import QTreeView, QAbstractItemView
 from PyQt5.QtCore import Qt, QObject, QModelIndex
 from PyQt5.QtGui import QMouseEvent
@@ -5,6 +6,8 @@ from .QtViewerModel import QtViewerModel
 
 
 class QtViewerTree(QTreeView):
+
+    logger = logging.getLogger('qt')
 
     def __init__(self, model: QtViewerModel, parent: QObject = None):
         super().__init__(parent=parent)
@@ -32,11 +35,17 @@ class QtViewerTree(QTreeView):
     def selectRoot(self):
         self.clearSelection()
         self.setCurrentIndex(QModelIndex())
+        self.logger.debug(
+            f"  tree root selected.")
 
     def selectViewer(self, i: int):
         index = self.model().viewerItem(i).index()
         self.setCurrentIndex(index)
+        self.logger.debug(
+            f"  tree.viewer[{i}] selected.")
 
     def selectLattice(self, i: int, j: int):
         index = self.model().latticeItem(i, j).index()
         self.setCurrentIndex(index)
+        self.logger.debug(
+            f"  tree.viewer[{i}].lattice[{j}] selected.")

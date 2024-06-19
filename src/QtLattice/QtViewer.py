@@ -1,25 +1,33 @@
+import logging
 from PyQt5.QtWidgets import QMainWindow, QSplitter
 from PyQt5.QtCore import Qt, QObject
 from .QtViewerModel import QtViewerModel
 from .QtViewerTree import QtViewerTree
 from .QtViewerMenu import QtViewerMenu
 from .QtViewerTab import QtViewerTab
+from .QtTerminal import QtTerminal
 
 
 class QtViewer(QMainWindow):
 
+    logger = logging.getLogger('qt')
+
     def __init__(self, parent: QObject = None):
         super().__init__(parent=parent)
-        self.viewer = QSplitter(Qt.Horizontal)
+        self.vilamo = QSplitter(Qt.Horizontal)
+        self.viewer = QSplitter(Qt.Vertical)
         self.model = QtViewerModel()
         self.tree = QtViewerTree(self.model)
         self.menu = QtViewerMenu(self.model)
         self.tab = QtViewerTab(self.model)
+        self.terminal = QtTerminal(self)
 
         self.setMenuBar(self.menu)
-        self.viewer.addWidget(self.tree)
         self.viewer.addWidget(self.tab)
-        self.setCentralWidget(self.viewer)
+        self.viewer.addWidget(self.terminal)
+        self.vilamo.addWidget(self.tree)
+        self.vilamo.addWidget(self.viewer)
+        self.setCentralWidget(self.vilamo)
         self.showMaximized()
         # model - tab signals
         self.model.viewerSelected.connect(self.tab.selectViewer)

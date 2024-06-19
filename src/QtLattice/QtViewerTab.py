@@ -1,3 +1,4 @@
+import logging
 from PyQt5.QtWidgets import QLabel, QSizePolicy
 from PyQt5.QtCore import Qt, QObject, pyqtSignal
 from PyQt5.QtGui import QPixmap, QDragEnterEvent, QDropEvent
@@ -18,6 +19,8 @@ class QtViewerTabDefault(QLabel):
 
 class QtViewerTab(MyTabWidget):
 
+    logger = logging.getLogger('qt')
+
     viewerSelectRequested = pyqtSignal(int)
     viewerInsertRequested = pyqtSignal(int, str)
     viewerRenameRequested = pyqtSignal(int, str)
@@ -34,7 +37,7 @@ class QtViewerTab(MyTabWidget):
         self.widgetOpenRequested.connect(self.request_viewerInsert)
         self.widgetCloseRequested.connect(self.request_viewerRemove)
         self.widgetRenameRequested.connect(self.request_viewerRename)
-        self.currentChanged.connect(self.request_viewerSelect)
+        self.tabBarClicked.connect(self.request_viewerSelect)
 
     def setup(self):
         self.clear()
@@ -50,66 +53,104 @@ class QtViewerTab(MyTabWidget):
     ###########################################################################
     def selectViewer(self, i: int):
         self.setCurrentIndex(i)
+        self.logger.debug(
+            f"  tab.viewer[{i}] selected.")
 
     def insertViewer(self, i: int):
         widget = vtkWidget(self.model.viewer(i)).render()
         self.insertTab(i, widget, widget.name())
+        self.logger.debug(
+            f"  tab.viewer[{i}] inserted.")
 
     def renameViewer(self, i: int):
         name = self.model.viewer(i).name
         self.tabBar().labels[i].setText(name)
+        self.logger.debug(
+            f"  tab.viewer[{i}] renamed {name}.")
 
     def removeViewer(self, i: int):
         self.removeTab(i)
+        self.logger.debug(
+            f"  tab.viewer[{i}] removed.")
 
     def selectLattice(self, i: int, j: int):
         self.setCurrentIndex(i)
+        self.logger.debug(
+            f"  tab.viewer[{i}].lattice[{j}] selected.")
 
     def insertLattice(self, i: int, j: int):
         lattice = self.model.lattice(i, j)
         self.widget(i).insertLattice(lattice, j)
+        self.logger.debug(
+            f"  tab.viewer[{i}].lattice[{j}] inserted.")
 
     def renameLattice(self, i: int, j: int):
-        pass
+        name = self.model.lattice(i, j).name
+        self.logger.debug(
+            f"  tab.viewer[{i}].lattice[{j}] renamed {name}.")
 
     def removeLattice(self, i: int, j: int):
         self.widget(i).removeLattice(j)
+        self.logger.debug(
+            f"  tab.viewer[{i}].lattice[{j}] removed.")
 
     def updateLattice(self, i: int, j: int):
         self.widget(i).refresh()
+        self.logger.debug(
+            f"  tab.viewer[{i}].lattice[{j}] updated.")
 
     ###########################################################################
     def request_viewerSelect(self, i: int):
+        self.logger.debug(
+            f"  requesting tab.viewer[{i}] selection.")
         if i < self.count() - 1:
             self.viewerSelectRequested.emit(i)
 
     def request_viewerAppend(self, viewer = ""):
+        self.logger.debug(
+            f"  requesting tab.viewer[-1] appending.")
         viewer = viewer if viewer else f"vtkViewer[{self.count() - 1}]"
-        self.viewerInsertRequested.emit(self.count()-1, viewer)
+        self.viewerInsertRequested.emit(self.count() - 1, viewer)
 
     def request_viewerInsert(self, i: int, viewer = ""):
+        self.logger.debug(
+            f"  requesting tab.viewer[{i}] insertion.")
         viewer = viewer if viewer else f"vtkViewer[{i}]"
         self.viewerInsertRequested.emit(i, viewer)
 
     def request_viewerRename(self, i: int, name: str):
+        self.logger.debug(
+            f"  requesting tab.viewer[{i}] renaming.")
         self.viewerRenameRequested.emit(i, name)
 
     def request_viewerRemove(self, i: int):
+        self.logger.debug(
+            f"  requesting tab.viewer[{i}] removal.")
         self.viewerRemoveRequested.emit(i)
 
     def request_latticeSelect(self, i: int, j: int):
+        self.logger.debug(
+            f"  requesting tab.viewer[{i}].lattice[{j}] selection.")
         self.latticeSelectRequested.emit(i, j)
 
     def request_latticeAppend(self, i: int, lattice = ""):
+        self.logger.debug(
+            f"  requesting tab.viewer[{i}].lattice[-1] appending.")
         self.latticeInsertRequested.emit(i, len(self.viewer(i)), lattice)
 
     def request_latticeInsert(self, i: int, j: int, lattice = ""):
+        self.logger.debug(
+            f"  requesting tab.viewer[{i}].lattice[{j}] insertion.")
         self.latticeInsertRequested.emit(i, j, lattice)
 
     def request_latticeRename(self, i: int, j: int, name: str):
+        self.logger.debug(
+            f"  requesting tab.viewer[{i}].lattice[{j}] renaming.")
         self.latticeRenameRequested.emit(i, j, name)
 
     def request_latticeRemove(self, i: int, j: int):
+        self.logger.debug(
+            f"  requesting tab.viewer[{i}].lattice[{j}] removal.")
         self.latticeRemoveRequested.emit(i, j)
 
     ###########################################################################
@@ -129,8 +170,18 @@ class QtViewerTab(MyTabWidget):
     def dropEvent(self, event: QDropEvent):
         for poscar in event.mimeData().text().splitlines():
             poscar = poscar.strip().split('///')[1].replace('\\', '/')
-            if self.count() > 1:
+            if self.count() - 1 > 0:
+                self.logger.info(
+                    "\nLoading lattice from POSCAR file\n" + poscar)
                 self.request_latticeAppend(self.currentIndex(), poscar)
+                self.logger.info(
+                    "Loaded lattice.\n")
             else:
+                self.logger.info(
+                    "\nOpening lattice from POSCAR file\n" + poscar)
                 self.request_viewerAppend()
-                self.request_latticeAppend(self.count() - 1, poscar)
+                self.logger.info(
+                    "Opened new viewer.")
+                self.request_latticeAppend(self.count() - 2, poscar)
+                self.logger.info(
+                    "Opened lattice.\n")
