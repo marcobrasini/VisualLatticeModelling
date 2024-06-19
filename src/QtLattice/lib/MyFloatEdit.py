@@ -41,6 +41,7 @@ class MyFloatEdit(QLineEdit):
 
     def setWidth(self, width: float = None):
         if width is None:
-            width = 10 * (self.formatter.length-1)
-        self.setFixedWidth(width)
+            sample = self.formatter.string_limitation()
+            width = self.fontMetrics().width(sample) + 10
+        self.setMinimumWidth(width)
         return self

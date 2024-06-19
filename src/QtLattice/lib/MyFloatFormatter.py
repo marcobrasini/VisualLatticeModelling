@@ -40,6 +40,9 @@ class MyFloatFormatter:
         self.limitation = limitation
         return self
 
+    def string_limitation(self):
+        return self.float_to_string(-self.limitation)
+
     def string_to_float(self, text):
         value = round(eval(text), self.resolution)
         value = min(value, +self.limitation)
