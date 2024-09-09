@@ -39,10 +39,8 @@ class Lattice:
         return self
 
     def transform(self, matrix):
-        print(matrix, np.linalg.det(matrix))
         if np.abs(np.linalg.det(matrix)) > 1:
             ncell = np.round(np.sum(np.abs(matrix), axis=1))
-            print(ncell)
             super_cell = LatticeSuper(ncell)
             self.atoms = super_cell.make_atoms(self.atoms, self.basis)
             self.atoms.set_sites(self.atoms.sites()*ncell)
@@ -65,6 +63,24 @@ class Lattice:
         basis = slab_cell.make_basis(self.basis)
         atoms = slab_cell.make_atoms(self.atoms, basis)
         return Lattice(name, basis, atoms)
+
+    def coulomb(self, charges, n):
+        coulomb = np.zeros((len(self.atoms)))
+        for i, atom in enumerate(self.atoms):
+            coulomb[i] = charges[atom.atom] * self.madelung(i, n, charges)
+        return coulomb
+
+    def madelung(self, i, n, charge):
+        n = n if hasattr(n, "__len__") else [n]*3
+        superlattice = self.super_cell([2*i+1 for i in n])
+        sites = superlattice.atoms.sites()
+        atoms = superlattice.atoms.atoms()
+        site0 = sites[i]
+        sites = np.delete(sites, i, axis=0)
+        atoms = np.delete(atoms, i)
+        delta = (sites - site0).centered().cartesian()
+        charges = np.array([charge[atom] for atom in atoms])
+        return np.sum(charges / np.linalg.norm(delta, axis=1))
 
     @classmethod
     def load_poscar(cls, poscar):

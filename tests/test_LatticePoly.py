@@ -31,7 +31,7 @@ class Test_LatticePoly:
         for i, atom in enumerate(poly.atoms):
             assert atom == self.atoms[i]
 
-    def test__hull__(self):
+    def test_hull(self):
         poly = LatticePoly(self.atoms, self.center)
         assert isinstance(poly.hull(), sp.spatial.ConvexHull)
 

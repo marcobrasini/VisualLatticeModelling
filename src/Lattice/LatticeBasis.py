@@ -6,6 +6,7 @@ class LatticeBasis(np.ndarray):
     def __new__(cls,
                 array: np.ndarray = np.identity(3),
                 parameter: float = 1.0):
+        array = np.array(array)
         obj = np.asarray(array * parameter).view(cls)
         obj.parameter = parameter
         return obj

@@ -8,3 +8,5 @@ from .LatticeBond import LatticeBond
 from .LatticeBonds import LatticeBonds
 from .LatticePoly import LatticePoly
 from .LatticePolys import LatticePolys
+from .LatticePlane import LatticePlane
+from .LatticeSlab import LatticeSlab

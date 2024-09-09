@@ -18,12 +18,11 @@ class LatticePoly:
         self.center = center
 
     def hull(self):
-        return sp.spatial.ConvexHull(self.points())
+        return sp.spatial.ConvexHull(self.points().cartesian())
 
     def points(self):
         sites = self.atoms.sites() - self.center.site
-        sites = sites.centered() + self.center.site
-        return sites.cartesian()
+        return sites.centered()
 
     def vertices(self):
         return self.hull().vertices
