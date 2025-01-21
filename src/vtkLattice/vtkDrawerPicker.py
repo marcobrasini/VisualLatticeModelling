@@ -3,10 +3,8 @@ from .vtkPicker import vtkPicker
 
 class vtkDrawerPicker(vtkPicker):
 
-    draw: None
-
-    def __init__(self, parent):
-        super().__init__(parent)
+    def __init__(self, widget):
+        super().__init__(widget)
         self.points = []
         self.color = (1.0, 0.0, 0.0)
 

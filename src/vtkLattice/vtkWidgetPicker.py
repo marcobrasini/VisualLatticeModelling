@@ -1,7 +1,6 @@
 from vtkmodules.vtkRenderingCore import vtkAreaPicker, vtkInteractorStyle
 from vtkmodules.vtkRenderingCore import vtkPolyDataMapper2D, vtkActor2D
 from .lib.vtkSourcePolyline import vtkSourcePolyline
-from .lib.vtkGroup import vtkGroup
 from .vtkPicker import vtkPicker
 
 
@@ -22,44 +21,42 @@ class vtkPickerArea(vtkAreaPicker):
         return self.GetProp3Ds()
 
     def draw(self, x0, y0, x1, y1):
-        self.source.set_points([[x0, y0, 0],
-                                [x1, y0, 0],
-                                [x1, y1, 0],
-                                [x0, y1, 0]])
+        self.source.set_points([
+            [x0, y0, 0], [x1, y0, 0], [x1, y1, 0], [x0, y1, 0]
+        ])
 
 
 class vtkWidgetPicker(vtkPicker):
 
-    def __init__(self,
-                 controller: vtkInteractorStyle,
-                 ):
-        super().__init__(controller)
+    def __init__(self, widget):
+        super().__init__(widget)
+        self.color = (0., 0., 0.)
+        self.selecting = False
         self.areaPicker = vtkPickerArea()
+        self.areaPicker.SetRenderer(self.renderer())
+        self.pickerFilter = vtkPicker.localPickFilter
 
     def rightPressed(self, obj, event):
         picked = super().rightPressed(obj, event)
         if picked is None:
-            self.picking = True
-            self.xmax, self.ymax = self.interactor().GetRenderWindow().GetSize()
+            self.selecting = True
+            self.xmax, self.ymax = self.window().GetSize()
             self.renderer().AddActor2D(self.areaPicker.actor)
 
     def rightReleased(self, obj, event):
-        if self.picking:
+        if self.selecting:
             picked = self.areaPicker(*self.pickedRange(), self.renderer())
-            for item in picked:
-                if isinstance(item, vtkGroup):
-                    [self.pickedEvent(part) for part in item.GetParts()]
-                else:
-                    self.pickedEvent(item)
+            for item in self.filter(*picked):
+                self.pickedEvent(item)
             self.renderer().RemoveActor(self.areaPicker.actor)
             self.areaPicker.draw(0, 0, 0, 0)
-            self.picking = False
+            self.selecting = False
         super().rightReleased(obj, event)
 
     def mouseMoved(self, obj, event):
-        if self.picking:
+        if self.selecting:
             self.areaPicker.draw(*self.pickedRange())
-            self.renderer().GetRenderWindow().Render()
+            self.window().Render()
         super().mouseMoved(obj, event)
 
     def pickedRange(self):

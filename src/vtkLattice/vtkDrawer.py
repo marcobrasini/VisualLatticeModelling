@@ -1,45 +1,34 @@
-from .lib.vtkEntityPolyline import vtkEntityPolyline
-from .lib.vtkEntityPolygon import vtkEntityPolygon
-from .lib.vtkEntityPoly import vtkEntityPoly
+from abc import abstractmethod
+from .vtkPicker import vtkPicker
 
 
-class vtkDrawer:
+class vtkDrawer(vtkPicker):
 
-    def __init__(self, parent):
-        self.parent = parent
-        self.renderer = self.parent.GetCurrentRenderer
-        self.entities = {
-            'polyline': [],
-            'polygon': [],
-            'poly': [],
-        }
+    def __init__(self, widget):
+        super().__init__(widget)
+        self.color = (1.0, 0.0, 0.0)
+        self.points = []
+        self.filter = vtkPicker.localPickFilter
 
-    def init_polyline(self):
-        polyline = vtkEntityPolyline()
-        self.entities['polyline'].append(polyline)
+    def pickedEvent(self, picked):
+        if self.picking:
+            super()._select(picked)
+            self.points.append(picked.GetCenter())
+            print(self.points)
+        else:
+            super()._remove(picked)
+            self.points.remove(picked.GetCenter())
+        self.draw()
 
-    def init_polygon(self):
-        polygon = vtkEntityPolygon()
-        self.entities['polygon'].append(polygon)
+    def reset(self):
+        self.points = []
+        super().reset()
 
-    def init_poly(self):
-        poly = vtkEntityPoly()
-        self.entities['poly'].append(poly)
+    def clean(self):
+        self.points = []
+        super().clean()
 
-    def draw_polyline(self, points):
-        polyline = self.entities['polyline'][-1]
-        self.renderer().RemoveActor(polyline.actor)
-        polyline.set_points(points)
-        polyline.render(self.renderer())
-
-    def draw_polygon(self, points):
-        polygon = self.entities['polygon'][-1]
-        self.renderer().RemoveActor(polygon.actor)
-        polygon.set_points(points)
-        polygon.render(self.renderer())
-
-    def draw_poly(self, points):
-        poly = self.entities['poly'][-1]
-        self.renderer().RemoveActor(poly.actor)
-        poly.set_points(points)
-        poly.render(self.renderer())
+    def draw(self):
+        self.renderer().RemoveActor(self.entity)
+        self.entity.set_points(self.points)
+        self.entity.render(self.renderer())
