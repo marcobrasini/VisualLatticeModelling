@@ -34,6 +34,12 @@ class LatticeSuper:
             super_atoms = np.tile(super_atoms, n)
         return super_atoms
 
+    def qs(self, qs):
+        super_q = qs
+        for n in np.abs(self.index):
+            super_q = np.tile(super_q, n)
+        return super_q
+
     def make_name(self, name):
         return name + "_" + self.name()
 
@@ -46,4 +52,5 @@ class LatticeSuper:
     def make_atoms(self, atoms, basis):
         super_atoms = self.atoms(atoms.atoms())
         super_sites = self.sites(atoms.sites())
-        return LatticeAtoms(basis=basis).make(super_atoms, sites=super_sites)
+        super_qs = self.qs(atoms.qs())
+        return LatticeAtoms(basis=basis).make(super_atoms, sites=super_sites, qs=super_qs)

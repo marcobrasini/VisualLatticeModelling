@@ -1,4 +1,5 @@
 import numpy as np
+# from tqdm import tqdm
 
 from .LatticeBasis import LatticeBasis
 from .LatticeAtoms import LatticeAtoms
@@ -25,11 +26,19 @@ class Lattice:
         self.bonds = LatticeBonds(basis=self.basis) if bonds is None else bonds
         self.polys = LatticePolys(basis=self.basis) if polys is None else polys
 
+    def set_basis(self, basis, parameter=1.0):
+        self.basis = LatticeBasis(basis, parameter)
+        self.atoms.basis = self.basis
+        for atom in self.atoms:
+            atom.site.basis = self.basis
+        self.bonds.basis = self.basis
+        self.polys.basis = self.basis
+
     def center(self):
         return np.sum(self.basis, axis=0) / 2
 
     def set_center(self, center):
-        sites = self.atoms.sites() - np.array(center)
+        sites = self.atoms.sites() + (0.5 - np.array(center))
         self.atoms.set_sites(sites.centered())
         return self
 
@@ -64,20 +73,19 @@ class Lattice:
         atoms = slab_cell.make_atoms(self.atoms, basis)
         return Lattice(name, basis, atoms)
 
-    def coulomb(self, charges, n):
-        coulomb = np.zeros((len(self.atoms)))
-        for i, atom in enumerate(self.atoms):
-            coulomb[i] = charges[atom.atom] * self.madelung(i, n, charges)
-        return coulomb
-
-    def madelung(self, i, n, charge):
+    def madelung(self, atom, n, charge, atoms = None):
         n = n if hasattr(n, "__len__") else [n]*3
-        superlattice = self.super_cell([2*i+1 for i in n])
+        index = self.atoms.index(atom)
+        if not atoms is None:
+            subcell = Lattice('', self.basis, atoms)
+            superlattice = subcell.super_cell([2 * i + 1 for i in n])
+        else:
+            superlattice = self.super_cell([2 * i + 1 for i in n])
         sites = superlattice.atoms.sites()
         atoms = superlattice.atoms.atoms()
-        site0 = sites[i]
-        sites = np.delete(sites, i, axis=0)
-        atoms = np.delete(atoms, i)
+        site0 = sites[index]
+        sites = np.delete(sites, index, axis=0)
+        atoms = np.delete(atoms, self.atoms.index(atom))
         delta = (sites - site0).centered().cartesian()
         charges = np.array([charge[atom] for atom in atoms])
         return np.sum(charges / np.linalg.norm(delta, axis=1))
@@ -95,14 +103,39 @@ class Lattice:
             atoms = LatticeAtoms(basis=basis).make(atoms, sites=sites)
             return cls(name, basis, atoms)
 
-
-    def save_poscar(self, poscar):
+    def save_poscar(self, poscar, selective=None):
         with open(poscar, 'w') as poscar:
             poscar.write(self.name + '\n')
             poscar.write('{:.10f}\n'.format(self.basis.parameter))
             np.savetxt(poscar, self.basis.reduced(), fmt='%16.10f')
-            np.savetxt(poscar, [list(self.atoms.count().keys())], fmt='%6s')
-            np.savetxt(poscar, [list(self.atoms.count().values())], fmt='%6s')
-            poscar.write('Direct\n')
-            np.savetxt(poscar, self.atoms.sites(), fmt='%16.10f')
+            atoms = self.atoms.count()
+            np.savetxt(poscar, [[atom for atom in atoms.keys() if atom]], fmt='%6s')
+            np.savetxt(poscar, [[atoms[atom] for atom in atoms.keys() if atom]], fmt='%6s')
+            if selective is None:
+                poscar.write('Direct\n')
+                for atom in self.atoms.count().keys():
+                    if atom == '':
+                        continue
+                    sites = self.atoms[atom].sites()
+                    np.savetxt(poscar, sites, fmt='%16.10f')
+            else:
+                poscar.write('Selective dynamics\n')
+                poscar.write('Direct\n')
+                for atom in self.atoms.count().keys():
+                    if atom == '':
+                        continue
+                    sites = self.atoms[atom].sites()
+                    selection = selective[self.atoms.atoms()==atom]
+                    selection = selection.astype(str)
+                    sites = np.hstack((sites, selection), dtype=object)
+                    np.savetxt(poscar, sites, fmt=[*['%16.10f']*3, *['%6s']*3])
             return self
+
+    @classmethod
+    def copy(cls, lattice):
+        import copy
+        lattice_copy = cls()
+        lattice_copy.name = copy.deepcopy(lattice.name)
+        lattice_copy.basis = copy.deepcopy(lattice.basis)
+        lattice_copy.atoms = copy.deepcopy(lattice.atoms)
+        return lattice_copy
