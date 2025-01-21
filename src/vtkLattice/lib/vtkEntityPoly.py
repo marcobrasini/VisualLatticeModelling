@@ -1,5 +1,5 @@
 import numpy as np
-from vtkmodules.vtkRenderingCore import vtkDataSetMapper, vtkActor, vtkRenderer
+from vtkmodules.vtkRenderingCore import vtkDataSetMapper, vtkRenderer
 from ..lib.vtkEntityPolyline import vtkEntityPolyline
 from ..lib.vtkEntityPolygon import vtkEntityPolygon
 from ..lib.vtkEntityPolyhedron import vtkEntityPolyhedron
@@ -18,8 +18,7 @@ class vtkEntityPoly(vtkEntity):
         self.source = vtkSource()
         self.mapper = vtkDataSetMapper()
         self.mapper.SetInputConnection(self.source.GetOutputPort())
-        self.actor = vtkActor()
-        self.actor.SetMapper(self.mapper)
+        self.SetMapper(self.mapper)
         self.set_color(DEFAULT_COLOR)
         self.set_opacity(DEFAULT_OPACITY)
 
@@ -39,12 +38,4 @@ class vtkEntityPoly(vtkEntity):
         elif self.rank == 3:
             self.source = vtkEntityPolyhedron().set_points(self.points).source
             self.mapper.SetInputConnection(self.source.GetOutputPort())
-        return self
-
-    def set_opacity(self, opacity):
-        self.actor.GetProperty().SetOpacity(opacity)
-        return self
-
-    def set_color(self, color):
-        self.actor.GetProperty().SetColor(color)
         return self

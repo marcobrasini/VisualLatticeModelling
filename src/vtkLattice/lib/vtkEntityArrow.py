@@ -1,4 +1,4 @@
-from vtkmodules.vtkRenderingCore import vtkPolyDataMapper, vtkActor
+from vtkmodules.vtkRenderingCore import vtkPolyDataMapper
 from ..lib.vtkEntity import vtkEntity
 from ..lib.vtkSourceArrow import vtkSourceArrow
 
@@ -9,8 +9,7 @@ class vtkEntityArrow(vtkEntity):
         self.source = vtkSourceArrow()
         self.mapper = vtkPolyDataMapper()
         self.mapper.SetInputConnection(self.source.GetOutputPort())
-        self.actor = vtkActor()
-        self.actor.SetMapper(self.mapper)
+        self.SetMapper(self.mapper)
 
     def vector(self):
         return self.source.vector()
@@ -21,9 +20,6 @@ class vtkEntityArrow(vtkEntity):
     def length(self):
         return self.source.length()
 
-    def color(self):
-        return self.actor.GetProperty().GetColor()
-
     def set_vector(self, vector):
         self.source.set_vector(vector)
         return self
@@ -32,6 +28,3 @@ class vtkEntityArrow(vtkEntity):
         self.source.set_origin(origin)
         return self
 
-    def set_color(self, color):
-        self.actor.GetProperty().SetColor(color)
-        return self
