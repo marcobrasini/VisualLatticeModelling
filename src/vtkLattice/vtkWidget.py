@@ -31,7 +31,7 @@ class vtkWidget(QVTKRenderWindowInteractor):
         self.camera.SetInteractor(self.GetRenderWindow().GetInteractor())
         self.camera.EnabledOn()
 
-        self.printer = vtkWidgetPrinter()
+        self.printer = vtkWidgetPrinter(self)
         self.printer.windowFilter.SetInput(self.GetRenderWindow())
 
         self.controller = vtkWidgetController(self)
