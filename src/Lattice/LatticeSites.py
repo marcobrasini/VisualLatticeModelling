@@ -28,14 +28,14 @@ class LatticeSites(LatticeArray):
         self = self.set_basis(matrix @ self.basis)
         return self
 
-    def periodic(self):
+    def periodic(self, resolution=SITES_RESOLUTION):
         basis = self.basis
-        _sites = np.round(self, SITES_RESOLUTION)
+        _sites = np.round(self, resolution)
         _delta = np.zeros(self.shape)
         while np.any(0.0 > _sites) or np.any(_sites >= 1.0):
             _delta = np.where(_sites < 0.0, _delta + 1.0, _delta)
             _delta = np.where(_sites >= 1.0, _delta - 1.0, _delta)
-            _sites = np.round(self, SITES_RESOLUTION) + _delta
+            _sites = np.round(self, resolution) + _delta
         self += _delta
         self.basis = basis
         return self
@@ -44,7 +44,7 @@ class LatticeSites(LatticeArray):
         basis = self.basis
         _sites = np.round(self, SITES_RESOLUTION)
         _delta = np.zeros(self.shape)
-        while np.any(-0.5 >= _sites) or np.any(_sites > 0.5):
+        while np.any(-0.5-SITES_TOLLERANCE >= _sites) or np.any(_sites > 0.5+SITES_TOLLERANCE):
             _delta = np.where(_sites <= -0.5, _delta + 1.0, _delta)
             _delta = np.where(_sites > 0.5, _delta - 1.0, _delta)
             _sites = np.round(self, SITES_RESOLUTION) + _delta
