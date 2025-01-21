@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import numpy as np
 
 from .LatticeArray import LatticeArray
@@ -12,6 +14,9 @@ class LatticeAtoms(LatticeArray):
         if isinstance(item, str):
             item = self.atoms() == item
         return super().__getitem__(item)
+
+    def copy(self):
+        return deepcopy(self)
 
     def count(self):
         count = np.unique(self.atoms(), return_counts=True)
@@ -32,6 +37,9 @@ class LatticeAtoms(LatticeArray):
     def vars(self):
         return super().get_attribute('var')
 
+    def qs(self):
+        return super().get_attribute('q')
+
     def set_atoms(self, atoms):
         super().set_attribute('atom', atoms)
         return self
@@ -47,6 +55,10 @@ class LatticeAtoms(LatticeArray):
 
     def set_vars(self, vars):
         super().set_attribute('var', vars)
+        return self
+
+    def set_qs(self, qs):
+        super().set_attribute('q', qs)
         return self
 
     def set_basis(self, basis):
@@ -74,14 +86,16 @@ class LatticeAtoms(LatticeArray):
              atoms: list,
              names: list = None,
              sites: list = None,
-             vars: list = None):
+             vars: list = None,
+             qs: list = None):
         basis = self.basis
         _atoms = []
         for i, atom in enumerate(atoms):
             name = None if names is None else names[i]
             site = None if sites is None else LatticeSite(sites[i], basis)
             var = None if vars is None else vars[i]
-            _atoms.append(LatticeAtom(atom, name, site , var))
+            q = None if qs is None else qs[i]
+            _atoms.append(LatticeAtom(atom, name, site , var, q))
         self = np.append(self, _atoms).view(LatticeAtoms)
         self.basis = basis
         return self
