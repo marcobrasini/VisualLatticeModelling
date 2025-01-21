@@ -6,9 +6,10 @@ class vtkViewer:
 
     def __init__(self,
                  name: str = None,
+                 lattice: list = None,
                  ):
         self.name = name or ""
-        self.lattice = []
+        self.lattice = [] if lattice is None else lattice
 
     def __len__(self):
         return self.lattice.__len__()
