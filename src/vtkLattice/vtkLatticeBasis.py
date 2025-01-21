@@ -19,10 +19,10 @@ class vtkLatticeBasis(vtkGroup):
         self.set_ratio(DEFAULT_RATIO)
         self.set_radius(DEFAULT_RADIUS)
         self.set_resolution(DEFAULT_RESOLUTION)
-        self.AddPart(self.O.actor)
-        self.AddPart(self.a.actor)
-        self.AddPart(self.b.actor)
-        self.AddPart(self.c.actor)
+        self.AddPart(self.O)
+        self.AddPart(self.a)
+        self.AddPart(self.b)
+        self.AddPart(self.c)
 
     def set_ratio(self, ratio):
         length = [self.a.length(), self.b.length(), self.c.length()]

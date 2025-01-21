@@ -3,7 +3,9 @@ from vtkmodules.vtkFiltersCore import vtkElevationFilter
 from vtkmodules.vtkRenderingCore import vtkDiscretizableColorTransferFunction
 from vtkmodules.vtkRenderingCore import vtkPolyDataMapper, vtkActor
 from Lattice import LatticeBond
-from .lib.vtkEntity import vtkEntity, vtkSource
+from .lib.vtkBatch import vtkBatch
+from .lib.vtkImage import vtkImage
+from .lib.vtkSource import vtkSource
 from .lib.vtkSourceCylinder import vtkSourceCylinder
 from .vtkLatticeAtoms import vtkLatticeAtoms
 
@@ -26,7 +28,6 @@ class vtkLatticeBondSource(vtkSource):
         self.SetInputConnection(self.filter.GetOutputPort())
         self.rescale((1.0, bond.length(), 1.0))
         self.orientate(bond.versor(), axis=1)
-        self.translate(bond.center().cartesian())
 
 
 class vtkLatticeBondColor(vtkDiscretizableColorTransferFunction):
@@ -42,26 +43,36 @@ class vtkLatticeBondColor(vtkDiscretizableColorTransferFunction):
             self.AddRGBPoint(x, *color)
 
 
-class vtkLatticeBond(vtkEntity):
+class vtkLatticeBond(vtkBatch):
     def __init__(self,
                  bond: LatticeBond,
                  vtkAtoms: vtkLatticeAtoms,
+                 images: list = [[0, 0, 0]],
                  ):
         self.bond = bond
         self.atom1 = vtkAtoms[vtkAtoms.index(bond.atom1)]
         self.atom2 = vtkAtoms[vtkAtoms.index(bond.atom2)]
-        self.source = vtkLatticeBondSource(self.bond)
         self.colors = vtkLatticeBondColor([self.atom1.color, self.atom2.color])
-        self.mapper = vtkPolyDataMapper()
-        self.mapper.SetInputConnection(self.source.GetOutputPort())
-        self.mapper.SetLookupTable(self.colors)
-        self.mapper.InterpolateScalarsBeforeMappingOn()
-        self.actor = vtkActor()
-        self.actor.SetMapper(self.mapper)
+        self.source = vtkLatticeBondSource(self.bond)
+        self.set_images(images)
+        self.draw(True, False)
+
+    def new_image(self, image):
+        image = (self.bond.center() + image).cartesian()
+        mapper = vtkPolyDataMapper()
+        mapper.SetInputConnection(self.source.GetOutputPort())
+        mapper.SetLookupTable(self.colors)
+        mapper.InterpolateScalarsBeforeMappingOn()
+        return vtkImage(self, mapper, image)
+
+    def set_color(self, color):
+        self.colors = vtkLatticeBondColor([color, color])
+        for image in self:
+            image.mapper.SetLookupTable(self.colors)
         self.draw(True, False)
 
     def draw(self, image2, image1):
         image = self.bond.image()
         if not np.all(image == 0):
-            if image2: self.atom2.add_image(image)
+            if image2: self.atom2.add_image(+image)
             if image1: self.atom1.add_image(-image)

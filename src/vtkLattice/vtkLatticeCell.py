@@ -30,21 +30,6 @@ class vtkLatticeCell(vtkEntity):
         self.source.set_indices(vtkLatticeCell.indices)
         self.mapper = vtkPolyDataMapper()
         self.mapper.SetInputConnection(self.source.GetOutputPort())
-        self.actor = vtkActor()
-        self.actor.SetMapper(self.mapper)
+        self.SetMapper(self.mapper)
         self.set_color(DEFAULT_COLOR)
-        self.set_width(DEFAULT_WIDTH)
-
-    def color(self):
-        return self.actor.GetProperty().GetColor()
-
-    def width(self):
-        return self.actor.GetProperty().GetLineWidth()
-
-    def set_color(self, color):
-        self.actor.GetProperty().SetColor(color)
-        return self
-
-    def set_width(self, width):
-        self.actor.GetProperty().SetLineWidth(width)
-        return self
+        self.set_linewidth(DEFAULT_WIDTH)
