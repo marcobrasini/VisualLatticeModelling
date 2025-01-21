@@ -3,15 +3,17 @@ from PyQt5.Qt import QApplication
 from PyQt5.QtWidgets import QMainWindow, QFrame, QVBoxLayout
 from .vtkViewer import vtkViewer
 from .vtkWidget import vtkWidget
+from .vtkLattice import vtkLattice
 
 
-def display(name: str = "", vtklattices: list = []):
+def display(name: str = "", vtklattices: list = [], camera: tuple = (), print=False):
+
     class QtWindow(QMainWindow):
 
         def __init__(self):
             QMainWindow.__init__(self)
             self.frame = QFrame()
-            self.widget = vtkWidget(vtkViewer(name))
+            self.widget = vtkWidget(vtkViewer(name), camera=camera)
             self.layout = QVBoxLayout()
             self.layout.addWidget(self.widget)
             self.frame.setLayout(self.layout)
@@ -25,7 +27,16 @@ def display(name: str = "", vtklattices: list = []):
     window = QtWindow()
     for lattice in vtklattices:
         window.widget.appendLattice(lattice)
-    window.viewer.name = name
+    if camera:
+        window.widget.camera.SetDistance(camera[0])
+        window.widget.camera.SetTilt(camera[1])
+        window.widget.camera.SetHeading(camera[2])
     window.show()
-    app.exec()
-    app.exit()
+    if print:
+        window.widget.print()
+        window.close()
+        return
+    else:
+        app.exec()
+        app.exit()
+

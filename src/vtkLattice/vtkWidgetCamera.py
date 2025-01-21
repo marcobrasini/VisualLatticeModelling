@@ -7,22 +7,35 @@ from vtkmodules.vtkInteractionWidgets import (
 
 class vtkWidgetCamera(vtkCompassWidget):
 
-    def __init__(self, renderer):
+    def __init__(self, widget, camera: tuple = None):
+        camera = camera if camera  else (8, 0, 30)
         super().__init__()
-        self.SetCurrentRenderer(renderer)
+        self.widget = widget
+        self.SetCurrentRenderer(self.renderer())
+        self.SetInteractor(self.interactor())
         self.compassRepresentation = vtkCompassRepresentation()
         self.compassRepresentation.SetMinimumDistance(0.1)
-        self.compassRepresentation.SetMaximumDistance(10)
+        self.compassRepresentation.SetMaximumDistance(camera[0])
         self.SetRepresentation(self.compassRepresentation)
         self.AddObserver(
             vtkCommand.WidgetValueChangedEvent,
             vtkWidgetCamera.CompassWidgetValueChangedCallback
         )
-        self.SetDistance(6)
-        self.SetTilt(10)
-        self.SetHeading(30)
+        self.SetDistance(camera[0])
+        self.SetTilt(camera[1])
+        self.SetHeading(camera[2])
         self.SetTiltSpeed(5)
-        self.SetDistanceSpeed(5)
+        self.SetDistanceSpeed(1)
+        self.EnabledOn()
+
+    def window(self):
+        return self.widget.window()
+
+    def renderer(self):
+        return self.widget.renderer()
+
+    def interactor(self):
+        return self.widget.interactor()
 
     @staticmethod
     def CompassWidgetValueChangedCallback(widget, event):

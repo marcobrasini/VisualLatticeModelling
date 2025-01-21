@@ -16,7 +16,8 @@ class vtkWidget(QVTKRenderWindowInteractor):
 
     def __init__(self,
                  viewer: vtkViewer = None,
-                 parent: QWidget = None
+                 parent: QWidget = None,
+                 camera: tuple = None,
                  ):
         super().__init__(parent=parent)
         self.viewer = viewer
@@ -27,12 +28,8 @@ class vtkWidget(QVTKRenderWindowInteractor):
         self.renderer.GetActiveCamera().SetPosition(0, 0, 1000)
         self.GetRenderWindow().AddRenderer(self.renderer)
 
-        self.camera = vtkWidgetCamera(self.renderer)
-        self.camera.SetInteractor(self.GetRenderWindow().GetInteractor())
-        self.camera.EnabledOn()
-
+        self.camera = vtkWidgetCamera(self, camera)
         self.printer = vtkWidgetPrinter(self)
-        self.printer.windowFilter.SetInput(self.GetRenderWindow())
 
         self.controller = vtkWidgetController(self)
         self.controller.SetDefaultRenderer(self.renderer)
