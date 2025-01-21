@@ -16,6 +16,15 @@ class LatticeArray(np.ndarray):
             return
         self.basis = getattr(obj, 'basis', None)
 
+    def take(self, indices):
+        return np.take(self, indices)
+
+    def index(self, obj):
+        return np.arange(self.__len__())[np.isin(self, obj)]
+        # for i, item in enumerate(self):
+        #     if id(item) == id(obj):
+        #         return i
+
     def get_attribute(self, attribute):
         value = [getattr(obj, attribute) for i, obj in enumerate(self)]
         return np.array(value)
@@ -33,3 +42,13 @@ class LatticeArray(np.ndarray):
         for i, obj in enumerate(self):
             getattr(obj, method)(value[i])
         return self
+
+    def delete(self, item):
+        array = np.delete(self, self.index(item)).view(type(self))
+        array.basis = self.basis
+        return array
+
+    def append(self, item):
+        array = np.append(self, item).view(type(self))
+        array.basis = self.basis
+        return array
