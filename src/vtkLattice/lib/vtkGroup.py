@@ -19,7 +19,18 @@ class vtkGroup(vtkOutlet, vtkAssembly):
     def rescale(self, factor):
         self.SetScale(factor)
 
-    def visible(self, visibility):
-        if not visibility:
-            self.visibility = self.GetVisibility()
-        self.SetVisibility(self.visibility and visibility)
+    def set_focusing(self, focusing, color = (0., 0., 0.)):
+        for entity in self.GetParts():
+            entity.GetProperty().SetEdgeColor(color)
+            entity.GetProperty().SetEdgeVisibility(focusing)
+
+    def visibility(self):
+        return self.GetVisibility()
+
+    def set_visibility(self, visibility):
+        self.SetVisibility(visibility)
+
+    def set_visible(self, visible):
+        if not visible:
+            self.visible = self.GetVisibility()
+        self.SetVisibility(self.visible and visible)

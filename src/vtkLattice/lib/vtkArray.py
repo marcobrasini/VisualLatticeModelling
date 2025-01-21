@@ -23,29 +23,50 @@ class vtkArray(vtkOutlet):
     def index(self, item):
         return self.array.index(item)
 
-    def actor(self):
-        return (entity.actor for entity in self)
-
     def render(self, renderer: vtkRenderer):
-        for actor in self.actor():
-            renderer.AddActor(actor)
+        for entity in self:
+            entity.render(renderer)
 
     def delete(self, renderer: vtkRenderer):
-        for actor in self.actor():
-            renderer.RemoveActor(actor)
+        for entity in self:
+            entity.delete(renderer)
 
     def translate(self, displacement):
-        for actor in self.actor():
-            actor.SetPosition(displacement)
+        for entity in self:
+            entity.translate(displacement)
 
     def rotate(self, angle, axis):
-        for actor in self.actor():
-            actor.RotateWXYZ(angle, *axis)
+        for entity in self:
+            entity.rotate(angle, axis)
 
     def rescale(self, factor):
-        for actor in self.actor():
-            actor.SetScale(factor)
-
-    def visible(self, visibility):
         for entity in self:
-            entity.visible(visibility)
+            entity.rescale(factor)
+
+    def set_focusing(self, focusing, color=(0., 0., 0.)):
+        for entity in self:
+            entity.set_focusing(focusing, color)
+
+    def set_visibility(self, visibility):
+        for entity in self:
+            entity.set_visibility(visibility)
+
+    def set_visible(self, visible):
+        for entity in self:
+            entity.set_visible(visible)
+
+    def set_opacity(self, opacity):
+        for entity in self:
+            entity.set_opacity(opacity)
+
+    def set_transparency(self, transparency):
+        for entity in self:
+            entity.set_transparency(transparency)
+
+    def set_linewidth(self, linewidth):
+        for entity in self:
+            entity.set_linewidth(linewidth)
+
+    def set_color(self, color):
+        for entity in self:
+            entity.set_color(color)
