@@ -27,16 +27,16 @@ class Test_LatticePolys:
         assert np.array_equal(polys.basis, self.basis)
         for i, poly in enumerate(polys):
             assert poly.center.atom == 'Zr'
-            assert np.all(poly.atoms.atoms() == 'O')
-            assert len(poly.atoms) == 6
+            assert np.all(poly.others.atoms() == 'O')
+            assert len(poly.others) == 6
 
     def test__init__sio(self):
         polys = LatticePolys(self.sio_polys, basis=self.basis)
         assert np.array_equal(polys.basis, self.basis)
         for i, poly in enumerate(polys):
             assert poly.center.atom == 'Si'
-            assert np.all(poly.atoms.atoms() == 'O')
-            assert len(poly.atoms) == 4
+            assert np.all(poly.others.atoms() == 'O')
+            assert len(poly.others) == 4
 
     def test_volume_zro(self):
         polys = LatticePolys(self.zro_polys, basis=self.basis)
@@ -59,13 +59,13 @@ class Test_LatticePolys:
         polys = polys.make(self.atoms['Zr'], self.atoms['O'], 6)
         for i, poly in enumerate(polys):
             assert poly.center == self.zro_polys[i].center
-            for atom in poly.atoms:
-                assert atom in self.zro_polys[i].atoms
+            for atom in poly.others:
+                assert atom in self.zro_polys[i].others
 
     def test_make_sio(self):
         polys = LatticePolys(basis=self.basis)
         polys = polys.make(self.atoms['Si'], self.atoms['O'], 4)
         for i, poly in enumerate(polys):
             assert poly.center == self.sio_polys[i].center
-            for atom in poly.atoms:
-                assert atom in self.sio_polys[i].atoms
+            for atom in poly.others:
+                assert atom in self.sio_polys[i].others
