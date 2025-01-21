@@ -3,14 +3,13 @@ from . import Example, render
 
 
 class Test_vtkLatticeCell:
-
-    basis = Example.lattice.basis
+    pass
 
 
 @render
 def test_rendering():
-    basis = Test_vtkLatticeCell.basis
+    basis = Example.lattice().basis
     vtkcell = vtkLatticeCell(basis)
     vtkcell.set_color((1.0, 0.0, 0.0))
-    vtkcell.set_width(2)
+    vtkcell.set_linewidth(2)
     return vtkcell

@@ -1,6 +1,7 @@
 from math import sqrt
 
 PeriodicTable = {
+    ''  : {'radius': 0.01, 'color': [  0,  0,  0]},
     'H' : {'radius': 0.53, 'color': [255,255,255]},
     'He': {'radius': 0.31, 'color': [217,255,255]},
     'Li': {'radius': 1.67, 'color': [204,128,255]},

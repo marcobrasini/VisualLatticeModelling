@@ -11,7 +11,7 @@ class Test_vtkSourcePolyhedron:
 @render
 def test_rendering():
 
-    from vtkmodules.vtkRenderingCore import vtkActor, vtkDataSetMapper
+    from vtkmodules.vtkRenderingCore import vtkDataSetMapper
     from src.vtkLattice.lib.vtkEntity import vtkEntity
 
     class vtkEntityPolyhedron(vtkEntity):
@@ -19,10 +19,9 @@ def test_rendering():
             self.source = source
             self.mapper = vtkDataSetMapper()
             self.mapper.SetInputConnection(self.source.GetOutputPort())
-            self.actor = vtkActor()
-            self.actor.SetMapper(self.mapper)
-            self.actor.GetProperty().SetColor(1.,0.,0.)
-            self.actor.GetProperty().SetLineWidth(2)
+            self.SetMapper(self.mapper)
+            self.GetProperty().SetColor(1.,0.,0.)
+            self.GetProperty().SetLineWidth(2)
 
     points = Test_vtkSourcePolyhedron.points
     indices = Test_vtkSourcePolyhedron.indices

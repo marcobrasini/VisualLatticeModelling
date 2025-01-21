@@ -3,6 +3,7 @@ from Lattice import LatticeAtom, LatticeSite
 from src.vtkLattice.vtkLatticeAtom import vtkLatticeAtom
 from . import render
 
+
 class Test_vtkLatticeAtom:
 
     site = LatticeSite([0.2, 0.0, 0.0], basis=2*np.identity(3))
@@ -13,6 +14,6 @@ class Test_vtkLatticeAtom:
 def test_rendering():
     atom = Test_vtkLatticeAtom.atom
     vtkatom = vtkLatticeAtom(atom)
-    vtkatom.set_image([[0,0,0], [1,0,0], [0,1,0], [1,1,0]])
-    vtkatom.draw(True, True, False)
+    vtkatom.set_images([[0,0,0], [1,0,0], [0,1,0], [1,1,0]])
+    vtkatom.draw(True, True, True)
     return vtkatom

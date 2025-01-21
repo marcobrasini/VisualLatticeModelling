@@ -1,24 +1,29 @@
 [project]
 name = "vtkLattice"
-version = "0.0.1"
+version = "0.1.0"
 authors = [
-  { name="Marco Brasini", email="brasinimarco@gmail.com" },
+  {name = "Marco Brasini", email = "brasinimarco@gmail.com"},
 ]
-description = "vtkLattice"
-readme = "README.md"
-requires-python = ">=3.8"
+description = "vtkLattice package"
 dependencies = [
-    "vtk",
-    "Lattice",
-    "numpy",
-    "scipy",
+  "vtk",
+  "numpy",
+  "Lattice",
 ]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["vtkLattice"]
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "License :: OSI Approved :: MIT License",
 ]
 
+
 [project.optional-dependencies]
-test = ["pytest"]
-gui = ["PyQt5"]
+qt = [
+  "PyQt5",
+]
+test = [
+  "pytest",
+]

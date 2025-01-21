@@ -9,5 +9,5 @@ class Test_vtkViewer:
 
     def test_vtkViewer(self):
         vtkviewer = vtkViewer("vtkViewer")
-        vtkviewer.load_lattice(vtkLattice(self.lattice))
+        vtkviewer.appendLattice(vtkLattice(self.lattice))
         assert vtkviewer.name == "vtkViewer"

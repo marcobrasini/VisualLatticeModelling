@@ -11,7 +11,7 @@ class Test_vtkSourcePolyline:
 @render
 def test_rendering():
 
-    from vtkmodules.vtkRenderingCore import vtkActor, vtkPolyDataMapper
+    from vtkmodules.vtkRenderingCore import vtkPolyDataMapper
     from src.vtkLattice.lib.vtkEntity import vtkEntity
 
     class vtkEntityPolyline(vtkEntity):
@@ -19,10 +19,9 @@ def test_rendering():
             self.source = source
             self.mapper = vtkPolyDataMapper()
             self.mapper.SetInputConnection(self.source.GetOutputPort())
-            self.actor = vtkActor()
-            self.actor.SetMapper(self.mapper)
-            self.actor.GetProperty().SetColor(1.,0.,0.)
-            self.actor.GetProperty().SetLineWidth(2)
+            self.SetMapper(self.mapper)
+            self.GetProperty().SetColor(1.,0.,0.)
+            self.GetProperty().SetLineWidth(2)
 
     points = Test_vtkSourcePolyline.points
     indices = Test_vtkSourcePolyline.indices

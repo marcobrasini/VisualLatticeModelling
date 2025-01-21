@@ -5,9 +5,9 @@ from . import Example, openqt
 
 
 @openqt
-def test_viewer():
+def test_widget():
     vtkviewer = vtkViewer()
     vtkwidget = vtkWidget(vtkviewer)
-    vtkwidget.appendLattice(vtkLattice(Example.lattice))
+    vtkwidget.appendLattice(vtkLattice(Example.lattice()))
     assert vtkwidget.parent() is None
     return vtkwidget

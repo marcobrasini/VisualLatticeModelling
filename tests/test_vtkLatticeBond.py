@@ -24,4 +24,6 @@ class Test_vtkLatticeBond:
 def test_rendering():
     bond = Test_vtkLatticeBond.bond
     vtkatoms = Test_vtkLatticeBond.vtkatoms
-    return vtkLatticeBond(bond, vtkatoms), vtkatoms
+    vtkbonds = vtkLatticeBond(bond, vtkatoms, [[0, 0, 0], [1, 0, 0]])
+    vtkbonds.draw(True, True)
+    return vtkbonds, vtkatoms

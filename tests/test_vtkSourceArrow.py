@@ -79,15 +79,14 @@ class Test_vtkSourceArrow:
 @render
 def test_rendering():
 
-    from vtkmodules.vtkRenderingCore import vtkActor, vtkPolyDataMapper
+    from vtkmodules.vtkRenderingCore import vtkPolyDataMapper
     from src.vtkLattice.lib.vtkEntity import vtkEntity
     class vtkEntityArrow(vtkEntity):
         def __init__(self, source: vtkSource):
             self.source = source
             self.mapper = vtkPolyDataMapper()
             self.mapper.SetInputConnection(self.source.GetOutputPort())
-            self.actor = vtkActor()
-            self.actor.SetMapper(self.mapper)
+            self.SetMapper(self.mapper)
 
     origin = Test_vtkSourceArrow.origin
     vector = Test_vtkSourceArrow.vector

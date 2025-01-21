@@ -39,7 +39,7 @@ class Test_vtkSourceCylinder:
 @render
 def test_rendering():
 
-    from vtkmodules.vtkRenderingCore import vtkActor, vtkPolyDataMapper
+    from vtkmodules.vtkRenderingCore import vtkPolyDataMapper
     from src.vtkLattice.lib.vtkEntity import vtkEntity
 
     class vtkEntityCylinder(vtkEntity):
@@ -47,8 +47,7 @@ def test_rendering():
             self.source = source
             self.mapper = vtkPolyDataMapper()
             self.mapper.SetInputConnection(self.source.GetOutputPort())
-            self.actor = vtkActor()
-            self.actor.SetMapper(self.mapper)
+            self.SetMapper(self.mapper)
 
     radius = Test_vtkSourceCylinder.radius
     length = Test_vtkSourceCylinder.length

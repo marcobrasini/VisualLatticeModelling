@@ -3,12 +3,11 @@ from . import Example, render
 
 
 class Test_vtkLatticeBasis:
-
-    basis = Example.lattice.basis
+    pass
 
 
 @render
 def test_rendering():
-    basis = Test_vtkLatticeBasis.basis
+    basis = Example.lattice().basis
     vtkbasis = vtkLatticeBasis(basis)
     return vtkbasis
