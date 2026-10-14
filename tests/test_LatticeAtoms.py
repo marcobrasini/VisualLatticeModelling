@@ -1,10 +1,10 @@
 import numpy as np
 from copy import deepcopy
 
-from src.Lattice.LatticeAtoms import LatticeAtoms
-from src.Lattice.LatticeAtom import LatticeAtom
-from src.Lattice.LatticeSite import LatticeSite
-from src.Lattice.LatticeSites import SITES_TOLLERANCE
+from src.pyLattice.LatticeAtoms import LatticeAtoms
+from src.pyLattice.LatticeAtom import LatticeAtom
+from src.pyLattice.LatticeSite import LatticeSite
+from src.pyLattice.LatticeSites import SITES_TOLLERANCE
 from . import Example
 
 

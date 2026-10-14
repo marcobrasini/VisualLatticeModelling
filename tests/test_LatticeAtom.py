@@ -1,6 +1,6 @@
 import numpy as np
-from src.Lattice.LatticeAtom import LatticeAtom
-from src.Lattice.LatticeSite import LatticeSite
+from src.pyLattice.LatticeAtom import LatticeAtom
+from src.pyLattice.LatticeSite import LatticeSite
 from . import Example
 
 class Test_LatticeAtom:

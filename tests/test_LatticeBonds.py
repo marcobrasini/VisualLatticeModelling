@@ -1,10 +1,10 @@
 import numpy as np
-from src.Lattice.LatticeSite import LatticeSite
-from src.Lattice.LatticeSites import LatticeSites
-from src.Lattice.LatticeAtom import LatticeAtom
-from src.Lattice.LatticeAtoms import LatticeAtoms
-from src.Lattice.LatticeBond import LatticeBond
-from src.Lattice.LatticeBonds import LatticeBonds
+from src.pyLattice.LatticeSite import LatticeSite
+from src.pyLattice.LatticeSites import LatticeSites
+from src.pyLattice.LatticeAtom import LatticeAtom
+from src.pyLattice.LatticeAtoms import LatticeAtoms
+from src.pyLattice.LatticeBond import LatticeBond
+from src.pyLattice.LatticeBonds import LatticeBonds
 from . import Example
 
 

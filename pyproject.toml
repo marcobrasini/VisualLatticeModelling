@@ -1,8 +1,8 @@
 [project]
-name = "Lattice"
+name = "pyLattice"
 version = "0.1.0"
 authors = [
-  {name = "Marco Brasini", email = "brasinimarco@gmail.com"},
+  {name = "Marco Brasini", email = "marcobrasini@etik.com"},
 ]
 description = "Lattice package"
 dependencies = [

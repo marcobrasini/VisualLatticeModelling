@@ -1,5 +1,5 @@
 import numpy as np
-from src.Lattice.LatticePlane import LatticePlane
+from src.pyLattice.LatticePlane import LatticePlane
 from . import Example
 
 

@@ -1,10 +1,10 @@
 import numpy as np
 import scipy as sp
 
-from src.Lattice.LatticeSite import LatticeSite
-from src.Lattice.LatticeAtom import LatticeAtom
-from src.Lattice.LatticeAtoms import LatticeAtoms
-from src.Lattice.LatticePoly import LatticePoly
+from src.pyLattice.LatticeSite import LatticeSite
+from src.pyLattice.LatticeAtom import LatticeAtom
+from src.pyLattice.LatticeAtoms import LatticeAtoms
+from src.pyLattice.LatticePoly import LatticePoly
 from . import Example
 
 

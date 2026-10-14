@@ -1,6 +1,6 @@
 import numpy as np
 
-from src.Lattice.Lattice import Lattice
+from src.pyLattice.Lattice import Lattice
 
 
 class Example:

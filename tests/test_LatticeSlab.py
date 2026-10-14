@@ -1,11 +1,11 @@
 import pytest
 import numpy as np
-from src.Lattice.Lattice import Lattice
-from src.Lattice.LatticeBasis import LatticeBasis
-from src.Lattice.LatticeAtoms import LatticeAtoms
-from src.Lattice.LatticeSuper import LatticeSuper
-from src.Lattice.LatticePlane import LatticePlane
-from src.Lattice.LatticeSlab import LatticeSlab
+from src.pyLattice.Lattice import Lattice
+from src.pyLattice.LatticeBasis import LatticeBasis
+from src.pyLattice.LatticeAtoms import LatticeAtoms
+from src.pyLattice.LatticeSuper import LatticeSuper
+from src.pyLattice.LatticePlane import LatticePlane
+from src.pyLattice.LatticeSlab import LatticeSlab
 from . import Example
 
 

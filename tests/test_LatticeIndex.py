@@ -1,5 +1,5 @@
 import numpy as np
-from src.Lattice.LatticeIndex import LatticeIndex
+from src.pyLattice.LatticeIndex import LatticeIndex
 from . import Example
 
 
@@ -32,23 +32,23 @@ class Test_LatticeIndex:
 
     def test_gcd(self):
         index = LatticeIndex(self.index)
-        assert type(index.gcd()) == int
-        assert index.gcd() == 1
+        assert type(LatticeIndex.gcd(index)) == int
+        assert LatticeIndex.gcd(index) == 1
 
     def test_gcd_zeros(self):
         index = LatticeIndex(self.zeros)
-        assert type(index.gcd()) == int
-        assert index.gcd() == 3
+        assert type(LatticeIndex.gcd(index)) == int
+        assert LatticeIndex.gcd(index) == 3
 
     def test_lcm(self):
         index = LatticeIndex(self.index)
-        assert type(index.lcm()) == int
-        assert index.lcm() == 12
+        assert type(LatticeIndex.lcm(index)) == int
+        assert LatticeIndex.lcm(index) == 12
 
     def test_lcm_zeros(self):
         index = LatticeIndex(self.zeros)
-        assert type(index.lcm()) == int
-        assert index.lcm() == 6
+        assert type(LatticeIndex.lcm(index)) == int
+        assert LatticeIndex.lcm(index) == 6
 
     def test_reduce(self):
         index = LatticeIndex(3 * self.index)

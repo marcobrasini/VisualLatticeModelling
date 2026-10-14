@@ -17,20 +17,20 @@ class LatticeIndex(np.ndarray):
         if obj is None: return
 
     @staticmethod
-    def GCD(self):
+    def gcd(self):
         return int(np.gcd.reduce(np.abs(self[self != 0])))
 
     @staticmethod
-    def LCM(self):
+    def lcm(self):
         return int(np.lcm.reduce(np.abs(self[self != 0])))
 
     def reduce(self):
-        gcd = LatticeIndex.GCD(self)
+        gcd = LatticeIndex.gcd(self)
         reduced = np.array([i/gcd for i in self]).astype(int)
         return reduced.view(LatticeIndex)
 
     def invert(self):
-        lcm = LatticeIndex.LCM(self)
+        lcm = LatticeIndex.lcm(self)
         inverse = np.array([0 if i==0 else lcm/i for i in self]).astype(int)
         return inverse.view(LatticeIndex)
 

@@ -1,10 +1,10 @@
 import numpy as np
 from copy import deepcopy
-from src.Lattice.Lattice import Lattice
-from src.Lattice.LatticeAtoms import LatticeAtoms
-from src.Lattice.LatticeBasis import LatticeBasis
-from src.Lattice.LatticeBonds import LatticeBonds
-from src.Lattice.LatticePolys import LatticePolys
+from src.pyLattice.Lattice import Lattice
+from src.pyLattice.LatticeAtoms import LatticeAtoms
+from src.pyLattice.LatticeBasis import LatticeBasis
+from src.pyLattice.LatticeBonds import LatticeBonds
+from src.pyLattice.LatticePolys import LatticePolys
 from . import Example
 
 

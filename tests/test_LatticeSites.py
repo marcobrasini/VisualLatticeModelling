@@ -1,8 +1,8 @@
 import pytest
 import numpy as np
 
-from src.Lattice.LatticeSites import LatticeSites
-from src.Lattice.LatticeSites import LatticeSitesError
+from src.pyLattice.LatticeSites import LatticeSites
+from src.pyLattice.LatticeSites import LatticeSitesError
 from . import Example
 
 
