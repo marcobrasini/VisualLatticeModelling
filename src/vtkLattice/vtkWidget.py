@@ -31,11 +31,11 @@ class vtkWidget(QVTKRenderWindowInteractor):
         self.renderer().GetActiveCamera().SetPosition(0, 0, 1000)
 
         self.camera = vtkWidgetCamera(self, camera)
-        self.picker = vtkWidgetPicker(self)
         self.drawer = vtkWidgetDrawer(self)
         self.printer = vtkWidgetPrinter(self)
-
-        self.interactor().SetInteractorStyle(vtkWidgetInteractor(self))
+        self.picker = vtkWidgetPicker(self)
+        self.style = vtkWidgetInteractor(self)
+        self.interactor().SetInteractorStyle(self.style.style)
         self.interactor().Initialize()
         self.interactor().Start()
         self.render()
@@ -50,7 +50,13 @@ class vtkWidget(QVTKRenderWindowInteractor):
         return self.GetRenderWindow().GetInteractor()
 
     def controller(self):
-        return self.interactor().GetInteractorStyle()
+        return self.style
+
+    def openPicker(self, picker):
+        self.style.picker = picker
+
+    def closePicker(self):
+        self.style.escape()
 
     def name(self):
         return self.viewer.name
@@ -87,20 +93,14 @@ class vtkWidget(QVTKRenderWindowInteractor):
 
     def delete(self):
         for lattice in self.viewer:
-            lattice.delete(self.renderer)
+            lattice.delete(self.renderer())
 
     def refresh(self):
-        self.renderer.GetRenderWindow().Render()
+        self.window().Render()
 
     def close(self):
         self.Finalize()
         super().close()
-
-    def openPicker(self, picker):
-        self.controller().picker = picker
-
-    def closePicker(self):
-        self.controller().escape()
 
     def print(self):
         self.printer.print(self.name())

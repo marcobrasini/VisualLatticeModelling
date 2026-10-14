@@ -4,10 +4,15 @@ from .lib.vtkSourcePolyline import vtkSourcePolyline
 from .vtkPicker import vtkPicker
 
 
-class vtkPickerArea(vtkAreaPicker):
+from vtkmodules.vtkCommonCore import vtkPoints
+from vtkmodules.vtkCommonDataModel import vtkPolyData, vtkCellArray
+from vtkmodules.vtkRenderingCore import vtkAreaPicker, vtkPolyDataMapper2D, vtkActor2D
+
+
+class vtkPickerArea:
 
     def __init__(self):
-        super().__init__()
+        self.picker = vtkAreaPicker()
         self.source = vtkSourcePolyline()
         self.source.set_indices([[0, 1, 2, 3, 0]])
         self.mapper = vtkPolyDataMapper2D()
@@ -16,9 +21,12 @@ class vtkPickerArea(vtkAreaPicker):
         self.actor.SetMapper(self.mapper)
         self.actor.GetProperty().SetColor((1.0, 0.0, 0.0))
 
+    def SetRenderer(self, renderer):
+        self.picker.SetRenderer(renderer)
+
     def __call__(self, x0, y0, x1, y1, renderer):
-        self.AreaPick(x0, y0, x1, y1, renderer)
-        return self.GetProp3Ds()
+        self.picker.AreaPick(x0, y0, x1, y1, renderer)
+        return self.picker.GetProp3Ds()
 
     def draw(self, x0, y0, x1, y1):
         self.source.set_points([
@@ -34,21 +42,20 @@ class vtkWidgetPicker(vtkPicker):
         self.selecting = False
         self.areaPicker = vtkPickerArea()
         self.areaPicker.SetRenderer(self.renderer())
-        self.pickerFilter = vtkPicker.localPickFilter
 
     def rightPressed(self, obj, event):
         picked = super().rightPressed(obj, event)
         if picked is None:
             self.selecting = True
             self.xmax, self.ymax = self.window().GetSize()
-            self.renderer().AddActor2D(self.areaPicker.actor)
+            self.renderer().AddViewProp(self.areaPicker.actor)
 
     def rightReleased(self, obj, event):
         if self.selecting:
             picked = self.areaPicker(*self.pickedRange(), self.renderer())
             for item in self.filter(*picked):
                 self.pickedEvent(item)
-            self.renderer().RemoveActor(self.areaPicker.actor)
+            self.renderer().RemoveViewProp(self.areaPicker.actor)
             self.areaPicker.draw(0, 0, 0, 0)
             self.selecting = False
         super().rightReleased(obj, event)

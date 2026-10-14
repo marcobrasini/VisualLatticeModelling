@@ -1,7 +1,7 @@
 import scipy as sp
 from vtkmodules.vtkFiltersModeling import vtkLinearSubdivisionFilter
 from vtkmodules.vtkRenderingCore import vtkDataSetMapper, vtkActor
-from Lattice import LatticePoly
+from pyLattice import LatticePoly
 from .lib.vtkBatch import vtkBatch
 from .lib.vtkImage import vtkImage
 from .lib.vtkSourcePolyhedron import vtkSourcePolyhedron

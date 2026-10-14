@@ -1,6 +1,6 @@
 from vtkmodules.vtkFiltersCore import vtkAppendPolyData
 from vtkmodules.vtkRenderingCore import vtkPolyDataMapper
-from Lattice import LatticeAtom
+from pyLattice import LatticeAtom
 from .lib.vtkBatch import vtkBatch
 from .lib.vtkImage import vtkImage
 from .lib.vtkSourceSphere import vtkSourceSphere

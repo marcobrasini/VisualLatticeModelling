@@ -1,8 +1,8 @@
-from vtkmodules.vtkRenderingCore import vtkPropPicker
+from vtkmodules.vtkRenderingCore import vtkCellPicker
 from .lib.vtkImage import vtkImage
 
 
-class vtkPicker(vtkPropPicker):
+class vtkPicker(vtkCellPicker):
 
     @staticmethod
     def localPickFilter(*actors):

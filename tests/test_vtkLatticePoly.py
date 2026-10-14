@@ -1,6 +1,6 @@
 import numpy as np
 
-from Lattice import LatticePoly, LatticeAtoms, LatticeAtom, LatticeSite
+from pyLattice import LatticePoly, LatticeAtoms, LatticeAtom, LatticeSite
 from src.vtkLattice.vtkLatticeAtoms import vtkLatticeAtoms
 from src.vtkLattice.vtkLatticeAtom import vtkLatticeAtom
 from src.vtkLattice.vtkLatticePoly import vtkLatticePoly

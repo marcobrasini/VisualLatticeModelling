@@ -1,5 +1,5 @@
 import numpy as np
-from Lattice import LatticeAtom, LatticeSite
+from pyLattice import LatticeAtom, LatticeSite
 from src.vtkLattice.vtkLatticeAtom import vtkLatticeAtom
 from . import render
 

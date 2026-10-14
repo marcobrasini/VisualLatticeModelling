@@ -68,7 +68,7 @@ class Example:
     @staticmethod
     def lattice():
 
-        from Lattice import Lattice
+        from pyLattice import Lattice
 
         poscar = 'tests/example/poscar.vasp'
         lattice = Lattice().load_poscar(poscar)

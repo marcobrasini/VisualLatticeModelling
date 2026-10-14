@@ -4,7 +4,7 @@ from . import Example, render
 
 class Test_vtkLattice:
 
-    lattice = Example.lattice
+    lattice = Example.lattice()
 
     def test__init__(self):
         vtklattice = vtkLattice(self.lattice)

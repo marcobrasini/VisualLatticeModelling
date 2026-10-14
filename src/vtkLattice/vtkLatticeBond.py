@@ -2,7 +2,7 @@ import numpy as np
 from vtkmodules.vtkFiltersCore import vtkElevationFilter
 from vtkmodules.vtkRenderingCore import vtkDiscretizableColorTransferFunction
 from vtkmodules.vtkRenderingCore import vtkPolyDataMapper, vtkActor
-from Lattice import LatticeBond
+from pyLattice import LatticeBond
 from .lib.vtkBatch import vtkBatch
 from .lib.vtkImage import vtkImage
 from .lib.vtkSource import vtkSource

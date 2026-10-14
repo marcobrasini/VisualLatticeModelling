@@ -5,7 +5,7 @@ from . import Example
 
 class Test_vtkViewer:
 
-    lattice = Example.lattice
+    lattice = Example.lattice()
 
     def test_vtkViewer(self):
         vtkviewer = vtkViewer("vtkViewer")

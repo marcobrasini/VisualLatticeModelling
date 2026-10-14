@@ -1,5 +1,5 @@
 from vtkmodules.vtkRenderingCore import vtkRenderer
-from Lattice import Lattice
+from pyLattice import Lattice
 from .vtkLatticeCell import vtkLatticeCell
 from .vtkLatticeBasis import vtkLatticeBasis
 from .vtkLatticeAtoms import vtkLatticeAtoms

@@ -1,18 +1,22 @@
 from vtkmodules.vtkInteractionStyle import vtkInteractorStyleTrackballCamera
+from vtkmodules.vtkRenderingCore import vtkInteractorStyle
 
 
-class vtkWidgetInteractor(vtkInteractorStyleTrackballCamera):
+class vtkWidgetInteractor:
 
     def __init__(self, widget):
-        super().__init__()
         self.widget = widget
-        self.picker = self.widget.picker
-        self.AddObserver("RightButtonPressEvent", self.rightPressed)
-        self.AddObserver("RightButtonReleaseEvent", self.rightReleased)
-        self.AddObserver("MouseMoveEvent", self.mouseMoved)
-        self.AddObserver("CharEvent", self.OnChar)
-        self.AddObserver("KeyPressEvent", self.keyPressed)
-        self.AddObserver("KeyReleaseEvent", self.keyRelease)
+        self.picker = widget.picker
+        self.style = vtkInteractorStyleTrackballCamera()
+        self.style.AddObserver("RightButtonPressEvent", self.rightPressed)
+        self.style.AddObserver("RightButtonReleaseEvent", self.rightReleased)
+        self.style.AddObserver("MouseMoveEvent", self.mouseMoved)
+        self.style.AddObserver("CharEvent", self.OnChar)
+        self.style.AddObserver("KeyPressEvent", self.keyPressed)
+        self.style.AddObserver("KeyReleaseEvent", self.keyRelease)
+
+    def GetInteractor(self):
+        return self.style.GetInteractor()
 
     def window(self):
         return self.widget.window()
@@ -27,7 +31,7 @@ class vtkWidgetInteractor(vtkInteractorStyleTrackballCamera):
         key = self.GetInteractor().GetKeyCode()
         if key in ['p', '3']:
             return
-        super(vtkInteractorStyleTrackballCamera, obj).OnChar()
+        vtkInteractorStyle.OnChar(self.style)
 
     def keyPressed(self, obj, event):
         if self.GetInteractor().GetShiftKey():
@@ -66,7 +70,7 @@ class vtkWidgetInteractor(vtkInteractorStyleTrackballCamera):
 
     def mouseMoved(self, obj, event):
         self.picker.mouseMoved(obj, event)
-        self.OnMouseMove()
+        self.style.OnMouseMove()
 
     def escape(self):
         self.picker.clean()

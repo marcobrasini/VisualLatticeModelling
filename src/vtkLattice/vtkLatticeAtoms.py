@@ -1,4 +1,4 @@
-from Lattice import LatticeAtom, LatticeAtoms
+from pyLattice import LatticeAtom, LatticeAtoms
 from .lib.vtkArray import vtkArray
 from .vtkLatticeAtom import vtkLatticeAtom
 

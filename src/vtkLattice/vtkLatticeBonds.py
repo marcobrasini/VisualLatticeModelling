@@ -1,4 +1,4 @@
-from Lattice import LatticeBond, LatticeBonds
+from pyLattice import LatticeBond, LatticeBonds
 from .vtkLatticeAtoms import vtkLatticeAtoms
 from .vtkLatticeBond import vtkLatticeBond
 from .lib.vtkArray import vtkArray
