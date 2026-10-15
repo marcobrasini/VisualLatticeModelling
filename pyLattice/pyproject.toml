@@ -1,0 +1,24 @@
+[project]
+name = "pyLattice"
+version = "0.1.0"
+authors = [
+  {name = "Marco Brasini", email = "marcobrasini@etik.com"},
+]
+description = "Lattice package"
+dependencies = [
+  "numpy",
+  "scipy",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["Lattice"]
+classifiers = [
+  "Programming Language :: Python",
+  "License :: OSI Approved :: MIT License",
+]
+
+[project.optional-dependencies]
+test = [
+  "pytest",
+]
