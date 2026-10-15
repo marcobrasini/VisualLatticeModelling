@@ -1,0 +1,32 @@
+[project]
+name = "QtLattice"
+version = "0.1.0"
+authors = [
+  {name = "Marco Brasini", email = "brasinimarco@gmail.com"},
+]
+description = "QtLattice package"
+dependencies = [
+  "pyqtconsole",
+  "PyQt5",
+  "vtk",
+  "numpy",
+  "pyLattice",
+  "vtkLattice",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {file = "LICENSE"}
+keywords = ["Qt", "Lattice"]
+classifiers = [
+  "Programming Language :: Python",
+  "License :: OSI Approved :: MIT License",
+]
+
+
+[project.optional-dependencies]
+qt = [
+  "PyQt5",
+]
+test = [
+  "pytest",
+]
