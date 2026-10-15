@@ -29,7 +29,13 @@ class vtkTransformation:
 
     @staticmethod
     def make_orientation(direction, axis):
-        direction = direction/np.linalg.norm(direction)
+        direction = np.asarray(direction, dtype=float)
+        norm = np.linalg.norm(direction)
+        if np.isclose(norm, 0.0):
+            matrix = vtkMatrix4x4()
+            matrix.Identity()
+            return matrix
+        direction = direction / norm
         i, j, k = np.roll([0, 2, 1], axis)
         orientation = np.zeros((3, 3))
         orientation[i] = direction

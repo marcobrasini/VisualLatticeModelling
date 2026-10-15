@@ -30,6 +30,17 @@ class QtViewerItem(QStandardItem):
     def setVTKLatticeItem(self, lattice: vtkLattice | str):
         if isinstance(lattice, str):
             lattice = vtkLattice.load_poscar(lattice)
+            # atoms = lattice.lattice.atoms
+            # bonds = lattice.lattice.bonds
+            # polys = lattice.lattice.polys
+            # bonds = bonds.make(atoms["Zr"], atoms["O"], 2.5)
+            # bonds = bonds.make(atoms["Si"], atoms["O"], 2.5)
+            # bonds = bonds.make(atoms["P"], atoms["O"], 2.5)
+            # polys = polys.make(atoms["Zr"], atoms["O"], 6)
+            # polys = polys.make(atoms["Si"], atoms["O"], 4)
+            # polys = polys.make(atoms["P"], atoms["O"], 4)
+            # lattice.bonds = vtkLatticeBonds(bonds, lattice.atoms)
+            # lattice.polys = vtkLatticePolys(polys, lattice.atoms)
         self.vtk = lattice
         self.setName(lattice.name)
         self.setCheckable(True)

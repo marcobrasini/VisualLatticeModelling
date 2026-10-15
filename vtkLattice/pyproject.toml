@@ -9,6 +9,7 @@ dependencies = [
   "vtk",
   "numpy",
   "pyLattice",
+  "PyQt5",
 ]
 requires-python = ">=3.8"
 readme = "README.md"
