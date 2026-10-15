@@ -26,7 +26,6 @@ class QtViewerModel(QStandardItemModel):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.current = QModelIndex()
-        self.root = self.invisibleRootItem
         self.itemChanged.connect(self.nameChanged)
         self.itemChanged.connect(self.stateChanged)
 
@@ -112,11 +111,12 @@ class QtViewerModel(QStandardItemModel):
             f"  model.viewer[{i}] inserted.")
 
     def exportViewer(self, i: int, file: str):
+        # TODO: l'export vero e proprio non è implementato (il file non viene scritto)
         self.viewerExported.emit(i)
         self.logger.debug(
             f"  model.viewer[{i}] exported in\n" + file)
 
-    def renameViewer(self, i: int,  name: str):
+    def renameViewer(self, i: int, name: str):
         if name:
             self.viewerItem(i).setName(name)
             self.logger.debug(
@@ -134,7 +134,6 @@ class QtViewerModel(QStandardItemModel):
     def selectLattice(self, i: int, j: int):
         self.current = self.latticeItem(i, j).index()
         self.latticeSelected.emit(i, j)
-        # self.logger.debug(f"model.viewer[{i}].lattice[{j}] selected.")
 
     def appendLattice(self, i: int, lattice: vtkLattice | str):
         lattice = QtViewerItem().setVTKLatticeItem(lattice)
@@ -151,15 +150,16 @@ class QtViewerModel(QStandardItemModel):
             f"  model.viewer[{i}].lattice[{j}] inserted.")
 
     def exportLattice(self, i: int, j: int, file: str):
+        # TODO: l'export vero e proprio non è implementato (il file non viene scritto)
         self.latticeExported.emit(i, j)
         self.logger.debug(
-            f"  model.viewer[{i}].lattice[{j}] exported.")
+            f"  model.viewer[{i}].lattice[{j}] exported in\n" + file)
 
     def renameLattice(self, i: int, j: int, name: str):
         if name:
             self.latticeItem(i, j).setName(name)
             self.logger.debug(
-                f"  model.viewer[{i}].lattice[{j}] renames '{name}'.")
+                f"  model.viewer[{i}].lattice[{j}] renamed '{name}'.")
 
     def removeLattice(self, i: int, j: int):
         self.viewerItem(i).removeRow(j)
@@ -170,6 +170,8 @@ class QtViewerModel(QStandardItemModel):
 
     ###########################################################################
     def nameChanged(self, item: QtViewerItem):
+        if not isinstance(item, QtViewerItem):
+            return
         if item.checkState() == item.visible:
             index = item.index()
             if item.isVTKViewerItem():
@@ -178,12 +180,14 @@ class QtViewerModel(QStandardItemModel):
                 self.latticeRenamed.emit(index.parent().row(), index.row())
 
     def stateChanged(self, item: QtViewerItem):
-        self.current = item.index()
-        if item.isVTKLatticeItem() and item.checkState() != item.visible:
-            # index = item.index()
-            i, j = self.currentIndex()
-            item.visible = item.checkState()
-            self.lattice(i, j).visible(bool(item.visible))
-            self.logger.debug(
-                f"  model.viewer[{i}].lattice[{j}] visible {bool(item.visible)}.")
-            self.latticeUpdated.emit(i, j)
+        if not isinstance(item, QtViewerItem) or not item.isVTKLatticeItem():
+            return
+        if item.checkState() == item.visible:
+            return
+        index = item.index()
+        i, j = index.parent().row(), index.row()
+        item.visible = item.checkState()
+        self.lattice(i, j).visible(bool(item.visible))
+        self.logger.debug(
+            f"  model.viewer[{i}].lattice[{j}] visible {bool(item.visible)}.")
+        self.latticeUpdated.emit(i, j)

@@ -5,26 +5,29 @@ from vtkLattice import vtkLattice, vtkViewer
 
 class QtViewerItem(QStandardItem):
 
-    VTKRootItem = 0
-    VTKViewerItem = 1
-    VTKLatticeItem = 2
+    def __init__(self):
+        super().__init__()
+        self.vtk = None
+        self.visible = Qt.Unchecked
 
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.name = self.data
-        self.setName = self.setData
+    def name(self) -> str:
+        return self.data(Qt.DisplayRole)
+
+    def setName(self, name: str):
+        self.setData(name, Qt.EditRole)
 
     def data(self, role=Qt.DisplayRole):
-        if role == Qt.DisplayRole:
+        if role in (Qt.DisplayRole, Qt.EditRole) and self.vtk is not None:
             return self.vtk.name
         return super().data(role)
 
     def setData(self, value, role=Qt.EditRole):
-        if role == Qt.DisplayRole or role == Qt.EditRole:
+        if role in (Qt.DisplayRole, Qt.EditRole) and self.vtk is not None:
             self.vtk.name = value
-        return super().setData(value, role)
+        super().setData(value, role)
 
-    def setVTKLatticeItem(self, lattice = vtkLattice | str):
+    # ':' (annotazione) e non '=' (valore di default)
+    def setVTKLatticeItem(self, lattice: vtkLattice | str):
         if isinstance(lattice, str):
             lattice = vtkLattice.load_poscar(lattice)
         self.vtk = lattice
@@ -34,7 +37,7 @@ class QtViewerItem(QStandardItem):
         self.visible = self.checkState()
         return self
 
-    def setVTKViewerItem(self, viewer = vtkViewer | str):
+    def setVTKViewerItem(self, viewer: vtkViewer | str):
         if isinstance(viewer, str):
             viewer = vtkViewer(viewer)
         self.vtk = viewer
@@ -42,15 +45,11 @@ class QtViewerItem(QStandardItem):
         self.setCheckable(False)
         self.visible = self.checkState()
         for lattice in viewer:
-            latticeItem = QtViewerItem(self)
-            latticeItem.setVTKLatticeItem(lattice)
-            self.appendRow(latticeItem)
+            self.appendRow(QtViewerItem().setVTKLatticeItem(lattice))
         return self
 
-    def isVTKViewerItem(self):
-        return (isinstance(self.vtk, vtkViewer)
-                or self.vtk == self.VTKViewerItem)
+    def isVTKViewerItem(self) -> bool:
+        return isinstance(self.vtk, vtkViewer)
 
-    def isVTKLatticeItem(self):
-        return (isinstance(self.vtk, vtkLattice)
-                or self.vtk == self.VTKLatticeItem)
+    def isVTKLatticeItem(self) -> bool:
+        return isinstance(self.vtk, vtkLattice)

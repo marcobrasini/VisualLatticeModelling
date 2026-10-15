@@ -16,18 +16,17 @@ class QtTerminal(QSplitter):
         self.addWidget(self.recorder)
         # Logger
         self.logger = logging.getLogger('qt')
-        self.logger.addHandler(self.recorder)
+        self.logger.addHandler(self.recorder.handler)
         self.init_environment()
 
     def add_local(self, name, value):
         self.console.push_local_ns(name, value)
         self.logger.info("    {} : {} = {}".format(name, type(value), value))
 
-
     def init_environment(self):
 
         import numpy as np
-        from Lattice import Lattice
+        from pyLattice import Lattice
         from vtkLattice import vtkLattice
 
         self.logger.info(dedent("""
@@ -45,3 +44,7 @@ class QtTerminal(QSplitter):
         self.add_local('model', getattr(self.parent(), 'model', None))
         self.add_local('logger', getattr(self.parent(), 'logger', None))
         self.logger.info("")
+
+    def closeEvent(self, event):
+        self.logger.removeHandler(self.recorder.handler)
+        super().closeEvent(event)

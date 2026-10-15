@@ -25,7 +25,7 @@ def openqt(func):
 
 class Example:
 
-    from Lattice import Lattice
+    from pyLattice import Lattice
 
     POSCAR = 'tests/example/POSCAR'
     poscar = 'tests/example/poscar.vasp'

@@ -1,7 +1,7 @@
 import logging
 from PyQt5.QtWidgets import QLabel, QSizePolicy
 from PyQt5.QtCore import Qt, QObject, pyqtSignal
-from PyQt5.QtGui import QPixmap, QDragEnterEvent, QDropEvent
+from PyQt5.QtGui import QPixmap, QDragEnterEvent, QDragMoveEvent, QDropEvent
 from vtkLattice import vtkWidget, vtkViewer, vtkLattice
 from .lib.MyTabWidget import MyTabWidget
 from .QtViewerModel import QtViewerModel
@@ -25,10 +25,10 @@ class QtViewerTab(MyTabWidget):
     viewerInsertRequested = pyqtSignal(int, str)
     viewerRenameRequested = pyqtSignal(int, str)
     viewerRemoveRequested = pyqtSignal(int)
-    latticeSelectRequested = pyqtSignal(int, int)       #
-    latticeInsertRequested = pyqtSignal(int, int, str)  #
-    latticeRenameRequested = pyqtSignal(int, int, str)  #
-    latticeRemoveRequested = pyqtSignal(int, int)       #
+    latticeSelectRequested = pyqtSignal(int, int)
+    latticeInsertRequested = pyqtSignal(int, int, str)
+    latticeRenameRequested = pyqtSignal(int, int, str)
+    latticeRemoveRequested = pyqtSignal(int, int)
 
     def __init__(self, model: QtViewerModel = None, parent: QObject = None):
         super().__init__(parent, QtViewerTabDefault)
@@ -106,13 +106,13 @@ class QtViewerTab(MyTabWidget):
         if i < self.count() - 1:
             self.viewerSelectRequested.emit(i)
 
-    def request_viewerAppend(self, viewer = ""):
+    def request_viewerAppend(self, viewer=""):
         self.logger.debug(
             f"  requesting tab.viewer[-1] appending.")
         viewer = viewer if viewer else f"vtkViewer[{self.count() - 1}]"
         self.viewerInsertRequested.emit(self.count() - 1, viewer)
 
-    def request_viewerInsert(self, i: int, viewer = ""):
+    def request_viewerInsert(self, i: int, viewer=""):
         self.logger.debug(
             f"  requesting tab.viewer[{i}] insertion.")
         viewer = viewer if viewer else f"vtkViewer[{i}]"
@@ -133,12 +133,12 @@ class QtViewerTab(MyTabWidget):
             f"  requesting tab.viewer[{i}].lattice[{j}] selection.")
         self.latticeSelectRequested.emit(i, j)
 
-    def request_latticeAppend(self, i: int, lattice = ""):
+    def request_latticeAppend(self, i: int, lattice=""):
         self.logger.debug(
             f"  requesting tab.viewer[{i}].lattice[-1] appending.")
         self.latticeInsertRequested.emit(i, len(self.viewer(i)), lattice)
 
-    def request_latticeInsert(self, i: int, j: int, lattice = ""):
+    def request_latticeInsert(self, i: int, j: int, lattice=""):
         self.logger.debug(
             f"  requesting tab.viewer[{i}].lattice[{j}] insertion.")
         self.latticeInsertRequested.emit(i, j, lattice)
@@ -160,20 +160,25 @@ class QtViewerTab(MyTabWidget):
         return super().closeEvent(event)
 
     def dragEnterEvent(self, event: QDragEnterEvent):
-        if event.mimeData().hasText():
+        if event.mimeData().hasUrls():
             event.acceptProposedAction()
 
-    def dragMoveEvent(self, event: QDragEnterEvent):
-        if event.mimeData().hasText():
+    def dragMoveEvent(self, event: QDragMoveEvent):
+        if event.mimeData().hasUrls():
             event.acceptProposedAction()
 
     def dropEvent(self, event: QDropEvent):
-        for poscar in event.mimeData().text().splitlines():
-            poscar = poscar.strip().split('///')[1].replace('\\', '/')
+        # urls()/toLocalFile() invece di split('///'): su Linux/macOS
+        # "file:///home/..." diventava "home/..." (senza "/" iniziale).
+        files = [url.toLocalFile() for url in event.mimeData().urls()
+                 if url.isLocalFile()]
+        for poscar in files:
             if self.count() - 1 > 0:
+                # se è selezionato il tab di default (l'ultimo) usa l'ultimo viewer
+                i = min(self.currentIndex(), self.count() - 2)
                 self.logger.info(
                     "\nLoading lattice from POSCAR file\n" + poscar)
-                self.request_latticeAppend(self.currentIndex(), poscar)
+                self.request_latticeAppend(i, poscar)
                 self.logger.info(
                     "Loaded lattice.\n")
             else:
@@ -185,3 +190,4 @@ class QtViewerTab(MyTabWidget):
                 self.request_latticeAppend(self.count() - 2, poscar)
                 self.logger.info(
                     "Opened lattice.\n")
+        event.acceptProposedAction()
