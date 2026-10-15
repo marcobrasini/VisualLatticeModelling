@@ -5,7 +5,7 @@
 **A modular Python toolkit for building, visualizing and exploring crystal lattices**
 
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 </div>
 
@@ -102,4 +102,4 @@ The three packages used to live in separate repositories ([pyLattice](https://gi
 
 ## License
 
-Distributed under the MIT License. See [`LICENSE`](LICENSE) for details.
+Distributed under the GNU General Public License v3.0 or later. See [`LICENSE`](LICENSE) for details.
